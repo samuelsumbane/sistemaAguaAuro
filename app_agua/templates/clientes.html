@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block adicionalButton %}
+        <button id="addClient">Ad. Cliente</button>
+{% endblock %}
+
+
+
+{% block conteudo %}
+    <script>
+
+         $(document).ready(function (){
+
+            $('#tabela').DataTable({
+                "ordering": false,
+                ajax: '{{ request.path }}?datatables=1',
+                serverSide: true,
+                columns: [
+                    { data: 'id_cliente', title: '', visible: false },
+                    { data: 'codigo_cliente', title: 'Codigo' },
+                    { data: 'nome_cliente', title: 'Nome' },
+                    { data: 'telefone_cliente', title: 'Telefone' },
+                    { data: 'endereco_cliente', title: 'Endereco' },
+                    {
+                        data: null,
+                        title: 'Ação',
+                        render: function(data, type, row) {
+                            return `<button type="button" class="updateButton" id="${row.id_cliente}"></button>`;
+                    }
+                }
+
+                ],
+                "oLanguage": {
+                "sProcessing":   "Processando...",
+                "sLengthMenu":   "Mostrar _MENU_ registros",
+                "sZeroRecords":  "Não foram encontrados resultados",
+                "sInfo":         "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "sInfoEmpty":    "Mostrando de 0 até 0 de 0 registros",
+                "sInfoFiltered": "",
+                "sInfoPostFix":  "",
+                "sSearch":       "Pesquisar:",
+                "sUrl":          "",
+                "oPaginate": {
+                    "sFirst":    "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext":     "Seguinte",
+                    "sLast":     "Último"
+                }
+              }
+            });
+
+            (function verifyForm(){
+                if($('#codigo').val() == "" || $('#nome').val() == "" || $('#telefone').val() == "" || $('#endereco').val() == "" ){
+                    $('.submitButton').attr('disabled', true)
+
+                }else{
+                    let codeValue = $('#codigo').val()
+                    let codeError = document.querySelector('#codeError')
+                    if(codeValue.length < 6 ){
+                      codeError.textContent = 'O código do cliente deve ter 6 digitos no minimo'
+
+                    }else if(codeValue.length >= 6 ){
+                        codeError.textContent = ''
+                        $('.submitButton').attr('disabled', true)
+                    }
+
+                    if($('#codigo').val() != "" && $('#nome').val() != "" && $('#telefone').val() != "" && $('#endereco').val() != "" && codeValue.length >= 6){
+                        $('.submitButton').attr('disabled', false)
+                    }
+                }
+                setTimeout(verifyForm, 800);
+            })();
+
+
+            $('#fillCodeButton').click(()=>{
+                var randomedValues = Array.from({length: 6}, ()=> Math.floor(Math.random() * 9) + 1)
+                var randomedNum = ""
+                randomedValues.map((val) => {
+                    randomedNum += val
+                })
+                $('#codigo').val(randomedNum)
+            })
+
+
+            $("#addBtn").click(()=>{
+                document.querySelector('.min-modal').classList.add("showModal")
+                $('#action').val('create')
+            })
+
+            // close Model
+            $('.fecharButton').click(()=>{
+                document.querySelector('.min-modal').classList.remove("showModal")
+            });
+
+                $('#clientForm').submit(function(e){
+                    e.preventDefault();
+                    $.ajax({
+                        type: 'POST',
+                        url: '{% url "criarCliente"  %}',
+                        data: $(this).serialize(),
+                        dataType:"json",
+                        success: function (response){
+
+                            $('#clientForm')[0].reset()
+                            let t = $('#tabela').DataTable()
+                            t.ajax.reload()
+
+                        }, error: function(response){
+                            console.log('Erro: ', response)
+                        }
+                    })
+                });
+
+
+                $('#tabela').on('click', '.updateButton', function(e) {
+                    var id = $(this).attr('id');
+
+                    $.ajax({
+                        url: '{% url "selecionarCliente"  %}',
+                        type: 'GET',
+                        data: {id: id},
+                        dataType:"json",
+                        success: function (response){
+
+                            let clientData = response['data']
+
+                            document.querySelector('.min-modal').classList.add("showModal")
+                            document.querySelector('.min-modal-title').textContent = "Actualizar cliente"
+
+                            $('#codigo').val(clientData['codigo_cliente'])
+                            $('#nome').val(clientData['nome_cliente'])
+                            $('#telefone').val(clientData['telefone_cliente'])
+                            $('#endereco').val(clientData['endereco_cliente'])
+                            $('#action').val('update')
+                            $('#idInput').val(clientData['id_cliente'])
+
+                            document.querySelector('.submitButton').textContent = 'Actualizar'
+
+                        }, error: function(response){
+                            console.log('Erro: ', response)
+                        }
+                    })
+                });
+
+
+        })
+
+    </script>
+
+    <div class="client-page">
+
+        <div class='client-page-header'>
+          <div class="titleDiv"><h2>Clientes</h2></div>
+
+          <div class="navDiv">
+              <button class="addButton" id="addBtn" style="margin-right:10px" title="Adicionar Cliente"></button>
+          </div>
+        </div>
+
+        <div class='client-page-body'>
+          <div class="client-page-body-table">
+            <table id="tabela" style="width:98%"></table>
+          </div>
+
+          <div class="min-modal" id="minModal">
+              <div class="min-modal-header">
+                <h2 class="min-modal-title">Adicionar cliente</h2>
+              </div>
+
+              <div class="min-modal-body">
+                <form method="post" class="modalForm" id="clientForm">
+                    {% csrf_token %}
+                  <div class="div-and-btn">
+                    <div>
+                      <label>Código</label>
+                      <input type="number" placeholder="Código do cliente"  class="formTextInput" name="codigo" id="codigo"/>
+                      <span class="errorText" id="codeError"></span>
+                    </div>
+                    <button type='button' class="addButton" id="fillCodeButton"></button>
+                  </div>
+                  <div>
+                    <label>Nome</label>
+                    <input type="text" class="formTextInput" placeholder="Nome do cliente" name="nome" id="nome" />
+                    <span class="errorText" id="nameError"></span>
+                  </div>
+                  <div>
+                    <label>Telefone</label>
+                    <input type="number" class="formTextInput" placeholder="Telefone do cliente" name="telefone" id="telefone"/>
+                  </div>
+                  <div>
+                      <label>Endereco</label>
+                      <input type="text" class="formTextInput" placeholder="Endereco do cliente" name="endereco" id="endereco"/>
+    <!--                <span class="errorText">{nameErrorText}</span>-->
+                  </div>
+                    <input type="hidden" name="action" id="action">
+                    <input type="hidden" name="idInput" id="idInput">
+
+                  <div class="min-submit-buttons">
+                      <button class="fecharButton" type="button" >Fechar</button>
+                      <button class="submitButton" type="submit">Submeter</button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="min-modal-footer"></div>
+          </div>
+
+        </div>
+
+        <div class='client-page-footer'></div>
+
+    </div>
+
+
+{% endblock %}
+
+

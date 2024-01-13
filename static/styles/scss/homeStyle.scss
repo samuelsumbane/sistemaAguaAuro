@@ -1,0 +1,129 @@
+@use 'abstracts' as *;
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+    position:fixed;
+    width:100vw;
+    height:100vh;
+    display:flex;
+    // background:lightblue;
+    // border:2px solid yellow;
+}
+
+
+main{
+    @include wh(100%, 100%);
+    @include flex-c;
+
+    .home-top{
+        @include wh(100%, 10%);
+        display: flex;
+
+        & > div{ width: 50%;}
+  
+        &-right{
+            display:flex;
+            justify-content:end;
+            align-items: center;
+
+            &-username{
+                width: 40%;
+                text-align: right;
+                padding-right:10px
+            }
+
+            &-userprofile{
+                @include wh(40px, 40px);
+                background:rgb(231, 222, 222);
+                border-radius: 50%;
+                margin-right:20px;
+                text-align: center;
+                cursor:pointer;
+
+                & h2{padding-top:16%;
+                color:rgb(1, 51, 80);}
+            }
+        }
+        
+    }
+
+    .home-center{
+        @include wh(100%, 90%);
+        @include flex-c;
+        overflow: auto;
+
+        &-first{
+            height:30%;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+
+            & > div{
+                @include wh(25%, 80%);
+                background:rgba(rgb(209, 206, 206), 0.1);
+                border-radius: $div-radius;
+                box-shadow: 0 0 7px rgb(143, 142, 142, .7);
+                text-align: center;
+                color:$big-text-color;
+                & > h2{
+                    padding-top: 13%;
+                }
+            }
+
+            // &-left{
+            // }
+
+            // &-center{
+            // }
+
+            // &-right{
+            // }
+        }
+
+        &-second{
+            height: 70%;
+            display: flex;
+            justify-content: space-around;
+
+            &-chart{
+                width:79%;
+                // background:gray;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: end;
+
+                & > div{
+                    width: min(48%, 500px);
+                    height: 80%;
+                    flex: 1 1 350px;
+                }
+                // &-1{
+                //     background:purple
+                // }
+                // &-2{
+                //     background:tomato;
+                // }
+            }
+
+            &-date{
+                width:max(17%, 120px);
+                height:50%;
+                background-image:linear-gradient(to bottom, rgb(12, 83, 116) 93%, rgba(45, 175, 250, 0.979) 7%);
+                border-radius: $div-radius;
+                margin-block: auto;
+                text-align: center;
+                color:aliceblue;
+                box-shadow: 0 0 22px darkgray;
+                
+                & > h2{
+                    padding-top:35%;
+                }
+            }
+
+        }
+    }
+
+
+
+}

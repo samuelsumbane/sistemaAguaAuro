@@ -1,0 +1,295 @@
+{% extends 'base.html' %}
+
+{% block adicionalButton %}
+<!--        <button id="addClient">Ad. Cliente</button>-->
+{% endblock %}
+
+
+
+
+{% block conteudo %}
+    <script>
+
+         $(document).ready(function (){
+
+            $('#tabela').DataTable({
+                "ordering": false,
+                ajax: '{{ request.path }}?datatables=1',
+                serverSide: true,
+                columns: [
+                    { data: 'pag_code', title: 'Codigo' },
+                    { data: 'nome_cliente', title: 'Nome' },
+                    { data: 'valordafatura', title: 'L. Atual' },
+                    { data: 'pag_totalpago', title: 'C. Faturado' },
+                    { data: 'pag_divida', title: 'Divida' },
+                    { data: 'pag_mes', title: 'Mês' },
+                    { data: 'pag_ano', title: 'Ano' },
+                    {
+                        data: null,
+                        title: 'Ações',
+                        render: function(data, type, row) {
+                            return `<button type="button" class="updateButton" id="${row.pag_id}" title="Ëditar fatura"></button>
+                            <button type="button" class="printButton" id="${row.pag_id}" title="Imprimir fatura"></button>
+                            `;
+                    }
+                }
+
+                ],
+                "oLanguage": {
+                "sProcessing":   "Processando...",
+                "sLengthMenu":   "Mostrar _MENU_ registros",
+                "sZeroRecords":  "Não foram encontrados resultados",
+                "sInfo":         "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "sInfoEmpty":    "Mostrando de 0 até 0 de 0 registros",
+                "sInfoFiltered": "",
+                "sInfoPostFix":  "",
+                "sSearch":       "Pesquisar:",
+                "sUrl":          "",
+                "oPaginate": {
+                    "sFirst":    "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext":     "Seguinte",
+                    "sLast":     "Último"
+                }
+              }
+            });
+
+
+           $('#openModal').click(()=>{
+            // $('#start').click(()=>{
+
+                document.querySelector('.medium-modal').classList.add("showModal")
+                $.ajax({
+                     url: '{% url "selecionarTodosClientes" %}',
+                     method: "GET",
+                     dataType: "json",
+                     success: function (response) {
+
+                       if(response['data'].length == 0){
+                            swal({
+                                icon:"warning",
+                                title:"Nenhum cliente encontrado",
+                                text:"Deseja adicionar clientes agora ou continuar aqui? ",
+                                buttons:['Continuar', 'Ad. Clientes']
+                            })
+                            .then((addCliente) => {
+                              if (addCliente) {
+                                let mainAppName = 'app_agua'
+                                window.location = `../../clientes/`
+                              }else{
+                                document.querySelector('.medium-modal').classList.remove("showModal")
+                              }
+                           })
+                       }else{
+                            let data = response['data']
+                            for (var i = 0; i < data.length; i++) {
+                                let id = data[i]['id_cliente']
+                                let codigo = data[i]['codigo_cliente']
+                                let nome = data[i]['nome_cliente']
+                                var clientRed = `${codigo} - ${nome} - ${id}`;
+                                var selectData = [clientRed]
+                                $("#clienteSelect").select2({ data: selectData });
+                            }
+                       }
+                     }, error: function () {
+                        alert('Erro')
+                     }
+                })
+            })
+
+            $('.fecharButton').click(()=>{
+                document.querySelector('.medium-modal').classList.remove("showModal")
+                $('#reciboForm')[0].reset()
+                document.querySelector('#minRecibosDiv').innerHTML = ""
+                        
+            })
+
+            var defArray = ''
+             $.ajax({
+                type: 'GET',
+                url: '{% url "selecionarDefinicoes"  %}',
+                data: {id:1},
+                dataType:"json",
+                success: function (response){
+                   defArray = response['data'][0]
+                }, error: function(response){
+                    console.log('Erro: ', response)
+                }
+            })
+
+
+            $("#clienteSelect").change(()=>{
+                let clientSelectValue = $("#clienteSelect").val()
+                let id_cliente = clientSelectValue.split(' - ')[2]
+                $('#pagCode').val(parseInt(id_cliente))
+                codigo = clientSelectValue.split(' - ')[2]
+
+                $.ajax({
+                    url: "{% url 'selecionarPagsDever'  %}",
+                    type: 'GET',
+                    data: {codigo: codigo},
+                    // dataType:"json",
+                    success: function (response){
+                        $('#reciboForm')[0].reset()
+                        document.querySelector('#minRecibosDiv').innerHTML = ""
+
+                        let pagData = response['data']
+                        if(pagData == "404"){
+                            clientSemReciboOuPagas()
+                        }else{
+                            nrData = pagData.length
+                            dividatotal = 0
+                            for(let pg = 0;pg < nrData;pg++){
+                                let mindata = pagData[pg]
+                                if(pagData[pg]['pag_totalpago'] < pagData[pg]['valordafatura'] || pagData[pg]['pag_divida'] > 0){
+                                    let valoremfalta = parseFloat(mindata['valordafatura']) - parseFloat(mindata['pag_totalpago'])
+                                    $('#minRecibosDiv').append(`
+
+                                        <input type="hidden" name="divsLen" id="divsLen" value="${nrData}">
+
+                                        <div class="codeAndName" style="width:46%;min-width:230px;margin-bottom:20px">
+                                            <input type="hidden" name="pagid${pg}" id="pagid${pg}" value="${mindata['pag_code_id']}">
+                                            
+                                            <input type="hidden" name="mes${pg}" value="${mindata['pag_mes']}">
+                                            <input type="hidden" name="ano${pg}" value="${mindata['pag_ano']}">
+                                            
+
+                                            <label for="">M. Da Fatura: <input type="text" class="inputTipoLabel" value="${mindata['pag_mes']} / ${mindata['pag_ano']}"  readOnly/></label> 
+                                            <br/>
+                                            <label for="">V. Da Fatura: <input type="text" class="inputTipoLabel" value="${mindata['valordafatura']}"  readonly/></label> <br/>
+
+                                            <label for="">Total Pago: <input type="text" class="inputTipoLabel" value="${mindata['pag_totalpago']}" readonly/></label> <br/>
+
+                                            <input type="hidden" class="inputTipoLabel" value="${mindata['pag_id']}" readonly/>
+
+                                            <label for="">V. Em Falta: <input type="text"  class="inputTipoLabel" value="${valoremfalta}" readonly/></label> <br/>
+
+                                            <label for="">V. Fat. Pagar: </label>
+                                            <input type="number" class="formTextMinInput" style="width:80px" name="valorapagar${pg}" /> 
+                                            <br />
+                                            <label for="">Divida: <input type="number" class="inputTipoLabel" value="${mindata['pag_divida']}" readonly /></label> <br/>
+
+                                            <label for="">V. Div. Pagar: </label> 
+                                            <input type="number" class="formTextMinInput" style="width:80px" name="dividaapagar${pg}" /> 
+                                            <br/>
+                                        </div>
+                                    `)
+                                    dividatotal += parseFloat(mindata['pag_divida'])
+
+                                }
+                                $('#divida').val(dividatotal)
+                            }
+                            // console.table(pagData)
+                            // console.log(pagData.length)
+                        }
+                    }, error: function(response){
+                        console.log('Erro: ', response)
+                    }
+                })
+            })
+
+             $('#reciboForm').submit(function(e){
+                e.preventDefault();
+                // let datapagamento = $('#datapagamento').val()
+                let datapagamento = '32'
+              
+                if(datapagamento == ""){
+                    alert('data de pagamento nao foi selecionada')
+                }else{
+                    $.ajax({
+                        type: 'POST',
+                        url: '{% url "pagarFatura"  %}',
+                        data: $(this).serialize(),
+                        dataType:"json",
+                        success: function (response){
+            
+                            if(response['data'] == '203'){
+                                valorAserPagoMaior()
+                            }else if(response['data'] == '200'){
+                                pagamentoFeitoComSucesso()
+                                $('#reciboForm')[0].reset()
+                                 document.querySelector('#minRecibosDiv').innerHTML = ""  
+                            }else{
+                                console.log(response['data'])
+                            }
+
+                     
+                        }, error: function(response){
+                            console.log('Erro: ', response)
+                        }
+                    })
+                }    
+            });
+        })
+
+    </script>
+
+ <div class="fatura-page">
+
+        <div class='fatura-page-header'>
+          <div class="titleDiv"><h2>Recibos</h2></div>
+
+          <div class="navDiv">
+              <button class="addButton" id="openModal" style="margin-right:10px" title="Criar fatura"></button>
+              <a href="{% url 'faturas' %}"><button class="btn"  style="margin-right:10px" title="Pagina de faturas">Faturas</button></a>
+          </div>
+
+        </div>
+
+        <div class='fatura-page-body'>
+          <div class="fatura-page-body-table">
+            <table id="tabela" style="width:98%"></table>
+          </div>
+
+          <div class="medium-modal" id="mediumModal">
+              <div class="medium-modal-header">
+                <h2 class="medium-modal-title">Pagamento de faturas</h2>
+              </div>
+
+              <div class="medium-modal-body" >
+                      <form method="post" class="modalForm" id="reciboForm">
+                        
+                        {% csrf_token %}
+
+                          <button type="button" class="btn" id="start">Start</button>
+                        <div class="reciboInputModal">
+                            <label>Cliente</label>
+                            <select id="clienteSelect">
+                                <option>Selecionar cliente</option>
+                            </select>
+                        </div>
+
+                        <!-- fats a pagar -->
+                        <div id="minRecibosDiv"></div>
+
+                        <div class="reciboInputModal">
+                            <label>Divida Total</label>
+                            <input type="number" class="formTextInput" name="divida" id="divida" disabled />
+                        </div>
+
+                        <div class="reciboInputModal">
+                             <label>Data de pagamento</label>
+                             <input type="date" class="formTextInput" name="datapagamento" id="datapagamento">
+                        </div>
+
+                      <div class="min-submit-buttons reciboInputModal" >
+                          <button class="fecharButton" type="button" >Fechar</button>
+                          <button class="submitButton" type="submit">Submeter</button>
+                      </div>
+                      
+                    </form>
+
+              </div>
+
+              <div class="medium-modal-footer"></div>
+          </div>
+
+        </div>
+
+        <div class='fatura-page-footer'></div>
+
+    </div>
+
+
+{% endblock %}
+

@@ -1,0 +1,7 @@
+.checkStyle{position: relative;width:35px !important;height:15px !important;appearance: none;background: #d3e4ec !important;outline:none;border-radius:15px;box-shadow:inset 0 0 5px rgba(0,0,0,.2);transition:.5s;}
+
+.checkStyle:checked{background:#03a9f4 !important}
+
+.checkStyle::before{content:"";position:absolute;width:15px;height:15px;border-radius:50%;top:0;left:0;background:white;transform:scale(1.1);box-shadow: 0 2px 5px rgba(0,0,0,.2);transition:.5s;}input:checked[type='checkbox']::before{left:20px}
+
+.centerText{color:rgb(0, 57, 90);margin: auto;}

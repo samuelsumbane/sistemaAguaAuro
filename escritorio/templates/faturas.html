@@ -1,0 +1,439 @@
+{% extends 'base.html' %}
+
+{% block adicionalButton %}
+<!--        <button id="addClient">Ad. Cliente</button>-->
+{% endblock %}
+
+
+
+
+{% block conteudo %}
+    <script>
+
+         $(document).ready(function (){
+            $('#tabela').DataTable({
+                "ordering": false,
+                ajax: '{{ request.path }}?datatables=1',
+                serverSide: true,
+                columns: [
+                    { data: 'fat_code', title: 'Codigo' },
+                    { data: 'nome_cliente', title: 'Nome' },
+                    { data: 'leituraatual', title: 'L. Atual' },
+                    { data: 'consumofaturado', title: 'C. Faturado' },
+                    { data: 'fat_divida', title: 'Divida' },
+                    { data: 'fat_mes', title: 'Mês' },
+                    { data: 'fat_ano', title: 'Ano' },
+                    { data: 'valordafatura', title: 'V. Fatura' },
+                    {
+                        data: null,
+                        title: 'Ações',
+                        render: function(data, type, row) {
+                            return `<button type="button" class="updateButton" id="${row.fat_id}" title="Ëditar fatura"></button>
+                            <button type="button" class="printButton" id="${row.fat_id}" title="Imprimir fatura"></button>
+                            `;
+                    }
+                }
+
+                ],
+                "oLanguage": {
+                "sProcessing":   "Processando...",
+                "sLengthMenu":   "Mostrar _MENU_ registros",
+                "sZeroRecords":  "Não foram encontrados resultados",
+                "sInfo":         "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "sInfoEmpty":    "Mostrando de 0 até 0 de 0 registros",
+                "sInfoFiltered": "",
+                "sInfoPostFix":  "",
+                "sSearch":       "Pesquisar:",
+                "sUrl":          "",
+                "oPaginate": {
+                    "sFirst":    "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext":     "Seguinte",
+                    "sLast":     "Último"
+                }
+              }
+            });
+
+            function printContent(el){var printData = document.getElementById(el);newWin = window.open("");newWin.document.write(printData.outerHTML);newWin.print();newWin.close();}
+
+            $('#tabela').on('click', '.updateButton', function(){
+                let fatid = $(this).attr('id')
+                $.ajax({
+                    type: 'GET',
+                    url: '{% url "selecionarParaEditarFatura"  %}',
+                    data: {id:fatid},
+                    dataType:"json",
+                    success: function (response){
+                        let fatdata = response['data']
+                        let fatdataLen = fatdata.length
+                        for(let a=0;a < fatdataLen;a++){
+                            if(fatdata[a]['pag_totalpago'] > 0){
+                                faturaNaoPodeSerEditada()
+                            }else{
+                                fat = response['dataFat']
+                                let leituraanterior = parseInt(fat['leituraatual']) - parseInt(fat['consumofaturado'])
+                                $('#fatCode').val(fat['fat_code'])
+                                $('#leituraatual').val(fat['leituraatual'])
+                                $('#leituraanterior').val(leituraanterior)
+                                $('#consumofaturado').val(fat['consumofaturado'])
+                                $('#valorFatura').val(fat['valordafatura'])
+                                $('#action').val('editarFatura')
+                                $('#fatid').val(fat['fat_id'])
+                                $('#pagid').val(fatdata[a]['pag_id'])
+                                document.querySelector('.max-modal').classList.add("showModal")
+                            }    
+                        }
+                    }, error: function(response){
+                        console.log('Erro: ', response)
+                    }
+                })
+            })
+
+
+            $("#tabela").on('click', ".printButton", function(){
+                let fatid = $(this).attr('id')
+
+                $.ajax({
+                    type: 'GET',
+                    url: '{% url "selecionarUmaFaturaPorId"  %}',
+                    data: {id:fatid},
+                    dataType:"json",
+                    success: function (response){
+                        let fatdata = response['data']
+                        document.querySelector('#docnomecliente').textContent = fatdata['fat_nome']
+                        document.querySelector('#docbairro').textContent = fatdata['fat_bairro']
+                        document.querySelector('#docleituraatual').textContent = fatdata['leituraatual']
+                        document.querySelector('#docquantidade').textContent = fatdata['consumofaturado']
+                        document.querySelector('#docvalorfaturado').textContent = fatdata['valordafatura']
+                        document.querySelector('#docmulta').textContent = fatdata['']
+                        document.querySelector('#docmes').textContent = fatdata['fat_mes']
+                        document.querySelector('#docano').textContent = fatdata['fat_ano']
+                        document.querySelector('#docleituraanterior').textContent = parseInt(fatdata['leituraatual']) - parseInt(fatdata['consumofaturado'])
+                        document.querySelector('#faturaDoc').style.display = 'block'
+                        printContent('faturaDoc')
+                        document.querySelector('#faturaDoc').style.display = 'none'
+                    }, error: function(response){
+                        console.log('Erro: ', response)
+                    }
+                })
+            })
+
+           $('#openModal').click(()=>{
+            // $('#start').click(()=>{
+                document.querySelector('.max-modal').classList.add("showModal")
+                $.ajax({
+                     url: '{% url "selecionarTodosClientes" %}',
+                     method: "GET",
+                     dataType: "json",
+                     success: function (response) {
+
+                       if(response['data'].length == 0){
+                            swal({
+                                icon:"warning",
+                                title:"Nenhum cliente encontrado",
+                                text:"Deseja adicionar clientes agora ou continuar aqui? ",
+                                buttons:['Continuar', 'Ad. Clientes']
+                            })
+                            .then((addCliente) => {
+                              if (addCliente) {
+                                let mainAppName = 'app_agua'
+                                window.location = `../../clientes/`
+                              }else{
+                                document.querySelector('.max-modal').classList.remove("showModal")
+                              }
+                           })
+                       }else{
+                            let data = response['data']
+                            for (var i = 0; i < data.length; i++) {
+                                let id = data[i]['id_cliente']
+                                let codigo = data[i]['codigo_cliente']
+                                let nome = data[i]['nome_cliente']
+                                var clientRed = `${codigo} - ${nome} - ${id}`;
+                                var selectData = [clientRed]
+                                $("#clienteSelect").select2({ data: selectData });
+                            }
+                       }
+                     }, error: function () {
+                        alert('Erro')
+                     }
+                })
+            })
+
+            $('.fecharButton').click(()=>{
+                document.querySelector('.max-modal').classList.remove("showModal")
+            })
+
+            var defArray = ''
+             $.ajax({
+                type: 'GET',
+                url: '{% url "selecionarDefinicoes"  %}',
+                data: {id:1},
+                dataType:"json",
+                success: function (response){
+                   defArray = response['data'][0]
+                }, error: function(response){
+                    console.log('Erro: ', response)
+                }
+            })
+
+
+            $("#clienteSelect").change(()=>{
+                let clientSelectValue = $("#clienteSelect").val()
+                let id_cliente = clientSelectValue.split(' - ')[2]
+                $('#fatCode').val(parseInt(id_cliente))
+                codigo = clientSelectValue.split(' - ')[2]
+
+                // var mesAnoPassado = thisOrLastYear().split(' ')
+                // let mesPassado = mesAnoPassado[0]
+                let mesPassado = 'Dezembro'
+                // let anoPassado = mesAnoPassado[1]
+                let anoPassado = '2023'
+
+                $.ajax({
+                    url: "{% url 'selecionarUmaFatura'  %}",
+                    type: 'GET',
+                    data: {codigo: codigo, mes:mesPassado, ano:anoPassado},
+                    dataType:"json",
+                    success: function (response){
+
+                        let faturaData = response['data'] 
+                        if(faturaData == "404" || faturaData == '407'){
+                            faturaNaoEncontrada()
+                            $('#leituraanterior').attr('disabled', false)
+
+                        }else if(faturaData == "405"){
+                            faturaDoMesJaCriada()
+                        }else if(faturaData == '406'){
+                            console.log('A leitura do mês anterior nao foi feita.')
+                        }else{
+                            $('#leituraanterior').val(response['data']['leituraatual'])
+                        }
+
+                    }, error: function(response){
+                        console.log('Erro: ', response)
+                    }
+                })
+            })
+
+            $('#calcConsumoBtn').click(()=>{
+                let lAnterior = $('#leituraanterior').val()
+                let lAtual = $('#leituraatual').val()
+                $('#leituraanterior').attr('disabled', true)
+
+                if(lAnterior == ''){
+                    lAnteriorNEncontrada()
+                }else{
+                    if(lAtual == ""){
+                        campoNaoPreenchido()
+                    }else{
+                        if(parseInt(lAnterior) > parseInt(lAtual)){
+                            lAnteriorMaior()
+                            $('#leituraatual').val('')
+                        }else{
+                            let consumoFaturado = parseInt(lAtual) - parseInt(lAnterior)
+                            $('#consumofaturado').val(consumoFaturado)
+
+                            if(consumoFaturado <= parseInt(defArray['def_consumomin'])){
+                            $('#valorFatura').val(defArray['def_taxafixa'])
+                            }else{
+                            $('#valorFatura').val(parseInt(consumoFaturado) * parseInt(defArray['def_metrocubico']))
+                            } 
+                        }
+                    }
+                }
+            })
+
+             $('#faturaForm').submit(function(e){
+                e.preventDefault();
+                $('#valorFatura').attr('disabled', false)
+                $('#consumofaturado').attr('disabled', false)
+                if( $('#valorFatura').val() == '' || $('#consumofaturado').val() == ''){
+                    camposNaoPreenchidos()
+                    $('#valorFatura').attr('disabled', true)
+                    $('#consumofaturado').attr('disabled', true)
+                }else{
+                    $.ajax({
+                        type: 'POST',
+                        url: '{% url "criarFatura"  %}',
+                        data: $(this).serialize(),
+                        dataType:"json",
+                        success: function (response){
+                            $('#valorFatura').attr('disabled', true)
+                            $('#consumofaturado').attr('disabled', true)
+                            $('#faturaForm')[0].reset()
+                            if (response['data'] == "200"){
+                                faturaCriadaComSucesso()
+                            }else{
+                                faturaEditadaComSucesso()
+                            }
+                            document.querySelector('.max-modal').classList.remove("showModal")
+
+                        }, error: function(response){
+                            console.log('Erro: ', response)
+                        }
+                    })
+                }
+             });
+        })
+    </script>
+
+ <div class="fatura-page">
+
+        <div class='fatura-page-header'>
+          <div class="titleDiv"><h2>Faturas</h2></div>
+
+          <div class="navDiv">
+              <button class="addButton" id="openModal" style="margin-right:10px" title="Criar fatura"></button>
+              <a href="{% url 'recibos' %}"><button class="btn"  style="margin-right:10px" title="Pagina de recibos">Recibos</button></a>
+          </div>
+
+        </div>
+
+        <div class='fatura-page-body'>
+          <div class="fatura-page-body-table">
+            <table id="tabela" style="width:98%"></table>
+          </div>
+
+          <div class="max-modal" id="mediumModal">
+              <div class="max-modal-header">
+                <h2 class="max-modal-title">Adicionar fatura</h2>
+              </div>
+
+              <div class="max-modal-body">
+                  <!--  body-left -->
+                  <div class="max-modal-body-left">
+                      <form method="post" class="modalForm" id="faturaForm">
+                        {% csrf_token %}
+                          <button type="button" class="btn" id="start">Start</button>
+                        <div>
+                            <label>Cliente</label>
+                            <select id="clienteSelect">
+                                <option>Selecionar cliente</option>
+                            </select>
+                        </div>
+
+                        <input type="hidden" name="fatCode" id="fatCode">
+                        <input type="hidden" name="action" id="action">
+                        <input type="hidden" name="fatid" id="fatid">
+                        <input type="hidden" name="pagid" id="pagid">
+
+                        <div>
+                             <label>Leitura anterior</label>
+                             <input type="number" class="formTextInput" name="leituraanterior" id="leituraanterior" disabled />
+                        </div>
+
+                        <div class="div-and-btn">
+                            <div>
+                               <label>Leitura atual</label>
+                               <input type="number" class="formTextInput" name="leituraatual" id="leituraatual" />
+                            </div>
+                            <button type="button" class="checkButton" id="calcConsumoBtn"></button>
+                        </div>
+
+                        <div>
+                           <label>Consumo faturado</label>
+                           <input type="number" class="formTextInput" name="consumofaturado" id="consumofaturado" disabled />
+                        </div>
+
+                        <div>
+                            <label>Valor da fatura</label>
+                            <input type="number" class="formTextInput" name="valorFatura" id="valorFatura" disabled />
+                        </div>
+
+
+                      <div class="min-submit-buttons">
+                          <button class="fecharButton" type="button" >Fechar</button>
+                          <button class="submitButton" type="submit">Submeter</button>
+                      </div>
+                    </form>
+                  </div>
+
+                <!--  body-right -->
+                  <div class="max-modal-body-right"></div>
+
+              </div>
+
+              <div class="max-modal-footer"></div>
+          </div>
+        </div>
+
+        <div class='fatura-page-footer'></div>
+        <div id="faturaDoc" style="width:600px;display: flex;flex-direction:column;background:white;border:2px solid;display:none; ">
+            <div id="faturaHeader">
+                <div id="headerPic" style="width:60%;margin:auto;"><img src="../../static/imgs/fatlogo.jpg" width="100%" height="170px" alt="logo da fatura"></div>
+            </div>
+            <div id="faturaBody" style="width:96%;border:1px solid ;margin:auto">
+                <div>
+                    <div style="display:flex">
+                       <p style="padding-left:20px">Nome do cliente: &nbsp &nbsp&nbsp &nbsp </p>
+                       <p id="docnomecliente"></p>
+                    </div>
+                    
+                    <div style="display:flex;">
+                       <p style="padding-left:20px">Bairro: &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp </p>
+                       <p id="docbairro"></p>
+                    </div>
+                    
+                </div>
+        
+                <div>
+                    <h2 style="text-align: center;">Consumo</h2>
+                    <div style="display:flex;">
+                        <p style="padding-left:20px">Leitura anterior:&nbsp &nbsp &nbsp &nbsp &nbsp&nbsp </p> <p id="docleituraanterior"></p> 
+                    </div>
+                    
+
+                    <div style="display:flex;">
+                        <p style="padding-left:20px">Leitura actual:&nbsp &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp </p><p id="docleituraatual"></p>
+                    </div>
+
+                    <div style="display:flex;">
+                        <p style="padding-left:20px">Quantidade: &nbsp &nbsp&nbsp &nbsp&nbsp &nbsp &nbsp &nbsp &nbsp </p>
+                        <p id="docquantidade"></p>
+                    </div> 
+
+                    <div style="display:flex;">
+                        <p style="padding-left:20px">Valor Faturado: &nbsp &nbsp &nbsp &nbsp &nbsp&nbsp  </p>
+                        <p id="docvalorfaturado"></p>
+                    </div>
+                    
+                    <div style="display:flex;">
+                        <p style="padding-left:20px">V. Atrasado + Multa: &nbsp </p><p id="docmulta"></p>
+                    </div>
+
+                    <div style="display:flex;">
+                        <p style="padding-left:20px">Mês de </p> &nbsp <p id="docmes"></p> &nbsp <p>de</p> &nbsp <p id="docano"></p> 
+                    </div>
+                        
+                    
+                </div>
+        
+                <div>
+                    <h2 style="text-align: center;">Prazo de pagamento</h2>
+                    <p style="padding-left:20px">Pagamento apartir do dia 01 até dia 10</p>
+                    <p style="padding-left:20px">Das 07:30 até 15:30min</p>
+                    
+                    <div style="width:90%;border:2px solid;margin:auto">
+                        <h2 style="padding-left:10px">NB:</h2>
+                        <ul>
+                            <li>O pagamento é feito a partir do dia 25 de cada mês até dia 10 do mês seguinte, menos Sábado e Domingo</li>
+        
+                            <li>A partir do dia 11 o cliente é sujeito ao pagamento de uma multa de 50 mts. No dia seguinte, a multa aumenta em 10 mts de cada dia até o fim de mês.</li>
+                            
+                            <li>A acumulacão de factura até 90 dias implica o corte de fornecimento de água e a taxa de religacao é de 1500.00 mts
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+        
+                <div style="width:90%;margin:auto;">
+                    <h2 style="text-align: center;">Assinatura do leitor.</h2>
+                    <h3 style="text-align: center;">........................................................................</h3>     
+                </div>
+            </div>
+            <br/>
+        </div>
+        
+    </div>
+
+{% endblock %}

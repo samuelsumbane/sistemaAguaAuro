@@ -1,0 +1,55 @@
+{% load static %}
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'styles/css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/css/elements.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/css/homeStyle.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/css/components.css' %}">
+
+</head>
+<body>
+  <div style="width:100%;height:100%;display:flex">
+     <section style="margin:auto">
+        <div class='loginDiv'>
+          <h2>Sistema Aguás</h2>
+  
+          <form method="post" action="/signin/">
+            {% csrf_token %}
+
+            <div>
+              <input type="text" class='formTextInput' placeholder='Usuário' name="username" id="username"/> 
+              <br />
+              <span class="errorText"></span>
+  
+            </div>
+            <div>
+              <input type="text" class='formTextInput' placeholder='Senha' name="password" id="password" />
+              <br />
+              <span class="errorText"></span>
+  
+            </div>
+            
+            <div>
+              <button class='btn'>Login</button>
+            </div>
+  
+            <span class="errorText"></span>
+  
+          </form>
+        </div>
+      </section>
+  </div>
+   
+    <!-- <form method="post">
+        {% csrf_token %}
+        
+        <button type="button">Submeter</button>
+    </form> -->
+</body>
+</html>

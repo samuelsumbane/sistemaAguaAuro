@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+
+{% block conteudo %}
+
+    <script>
+       $(document).ready(function (){
+
+            $.ajax({
+                type: 'GET',
+                url: '{% url "selecionarDefinicoes"  %}',
+                data: {id:1},
+                dataType:"json",
+                success: function (response){
+
+                   let defData = response['data'][0]
+                   $('#taxafixa').val(defData['def_taxafixa'])
+                   $('#multaforadoprazo').val(defData.def_multaforadoprazo)
+                   $('#metrocubico').val(defData.def_metrocubico)
+                   $('#iva').val(defData.def_iva)
+                   $('#vencimentoday').val(defData.def_vencimentoday)
+                   $('#consumomin').val(defData.def_consumomin)
+
+                   document.querySelector('#multar').checked = true
+
+                }, error: function(response){
+                    console.log('Erro: ', response)
+                }
+            })
+
+
+
+            $('#multar').change(()=>{
+                 if(document.querySelector('#multar').checked == false){
+                    $('#multar').val('False')
+                 }else{
+                    $('#multar').val('True')
+                }
+            })
+
+
+            $('#mainRightPartForm').submit(function(e){
+                e.preventDefault()
+                 $.ajax({
+                    type: 'POST',
+                    url: '{% url "updateDef"  %}',
+                    data: $(this).serialize(),
+                    dataType:"json",
+                    success: function (response){
+                        response['data'] == "201" ? definicoesAcao('atualizadas') : definicoesAcao('salvas')
+                    }, error: function(response){
+                        console.log('Erro: ', response)
+                    }
+                 })
+            })
+
+        })
+    </script>
+
+<div class="def-page">
+    <div class="def-page-header">
+      <div class='def-page-header-title'>
+        <h2>Definicoes</h2>
+      </div>
+    </div>
+
+    <div class="def-page-body">
+      <div class='def-page-body-search'>
+        <input type="search" name="" placeholder="Pesquisar" />
+      </div>
+
+      <div class="def-page-body-main">
+          <div class='def-page-body-main-left'>
+               <br />
+            <ul>
+               <li class='def-page-body-main-left-item' >Todas</li>
+               <li class='def-page-body-main-left-item' >
+                  Multa
+
+                      <div class='sub-item-div'>
+                          <ul>
+                              <button class='btnLabel'>Multar</button>
+
+                              <button class='btnLabel'>Percentagem da multa</button>
+                          </ul>
+                      </div>
+                </li>
+
+                <li class='def-page-body-main-left-item' >Metro cúbico
+
+                      <div class='sub-item-div'>
+                          <ul>
+                              <li></li>
+
+                              <button class='btnLabel'>Valor de metro cúbico</button>
+                          </ul>
+                      </div>
+                </li>
+            </ul>
+          </div>
+
+          <div class='def-page-body-main-right scrolled' id="mainRightPart">
+              <form action="" method="post" id="mainRightPartForm">
+
+                {% csrf_token %}
+                  <div class="defDivConf" >
+                    <h3 class="defDivConf-title">Consumo minimo</h3>
+                    <p class="defDivConf-title">Consumo minimo de água (em metros)</p>
+                    <input type="number" name="consumomin" id="consumomin" class="defInput"/>
+                  </div>
+
+                  <div class="defDivConf" >
+                    <h3 class="defDivConf-title">Taxa fixa</h3>
+                    <p class="defDivConf-title">Valor da taxa fixa</p>
+                    <input type="number" name="taxafixa" id="taxafixa" class="defInput"/>
+                  </div>
+
+                  <div class="defDivConf" >
+                    <h3 class="defDivConf-title">Multar</h3>
+                    <p class="defDivConf-title">Os clientes podem ser ou não ser multados ao esceder a data limite de pagamento de faturas.</p>
+                    <input type="checkbox" class='checkStyle' name="multar" id="multar" value="False"/>
+                  </div>
+
+                  <div class="defDivConf" >
+                    <h3 class="defDivConf-title">Multa</h3>
+                    <p class="defDivConf-title">Percentagem que será calculada da factura.</p>
+                    <input type="number" name="multaforadoprazo" id="multaforadoprazo" class="defInput" />
+                  </div>
+
+                  <div class="defDivConf" >
+                    <h3 class="defDivConf-title">Metro cúbico</h3>
+                    <p class="defDivConf-title">O custo de metro cúbico</p>
+                    <input type="number" name="metrocubico" id="metrocubico" key="any" class="defInput" />
+                  </div>
+
+                  <div class="defDivConf" >
+                    <h3 class="defDivConf-title">Data limite de pagamento</h3>
+                    <p class="defDivConf-title">A data limite é usada para multar facturas que não foram pagas em cada mês.</p>
+                    <input type="number" name="vencimentoday" id="vencimentoday" class="defInput" />
+                  </div>
+
+                  <div class="defDivConf" >
+                    <h3 class="defDivConf-title">IVA</h3>
+                    <p class="defDivConf-title">Percentagem da IVA</p>
+                    <input type="number" name="iva" id="iva" class="defInput" />
+                  </div>
+
+                    <br />
+                  <div class="min-submit-buttons">
+                      <button class="submitButton" type="submit">Salvar</button>
+                  </div>
+              </form>
+
+
+          </div>
+
+      </div>
+    </div>
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,25 @@
+@use '../abstracts/variables' as *;
+
+
+@mixin btn-hover{
+    color:$btn-color-hover;
+    background-color:$btn-bg-hover;
+}
+
+@mixin wh($w, $h){
+    width: $w;
+    height: $h;
+}
+
+@mixin w($w){
+    width: $w;
+}
+
+@mixin h($h){
+    height: $h;
+}
+
+@mixin flex-c(){
+    display: flex;
+    flex-direction: column;
+}

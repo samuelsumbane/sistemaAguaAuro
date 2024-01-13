@@ -1,0 +1,145 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+
+
+.btn{
+    width:100px;
+    height:33px;
+    // background-color:$btn-bg;
+    background-color:transparent;
+    border:1px solid $btn-bg;
+    color:$btn-2-color;
+    border-radius:$btn-radius;
+    transition:.8s;
+    background-repeat: no-repeat;
+    background-size:28px;
+    background-position: center;
+
+    &:hover{
+        @include btn-hover;
+        border:1px solid $btn-bg-hover;
+        color:white;
+    }
+}
+
+.backButton{
+    @extend .btn;
+    border:none !important;
+    background-image:url("../../icons/arrow-left.svg");
+}
+
+.btnLabel{
+    background:transparent;
+    border:none;
+    color:tan;
+    
+    &:hover{
+        color:$bg-primary
+    }
+}
+
+:is(.deleteButton, .disableButton, .disableUser, .updateButton, .payButton, .createButton, .addButton, .printButton, .addUser, .addClient, .checkButton, .disableClient, .activeUser, .promoveBtn, .despromoveBtn){
+    @extend .btn;
+    width:30px;
+    height:30px;
+    background-size:18px;
+    border:none;
+    background-color:#D6DBDC;
+}
+
+:is(.deleteButton, .disableButton, .disableUser, .updateButton, .payButton, .createButton, .addButton, .printButton, .addUser, .addClient, .checkButton, .disableClient, .activeUser, .promoveBtn, .despromoveBtn):hover{
+    background-color:lightgray;
+}
+
+.addButton{
+    background-image:url("../../icons/plus-lg.svg");
+}
+
+.deleteButton{  
+    background-image:url("../../icons/excluir.svg");
+}
+
+.disableUser{
+    background-image:url("../../icons/d_user.svg")
+}
+
+.activeUser{
+    background-image:url("../../icons/person-check.svg")
+}
+
+.disableButton{
+    background-image:url("../../icons/excluir.svg");
+}
+
+.updateButton{
+    background-image:url("../../icons/editar.svg");
+}
+
+.payButton{
+    background-image:url("../../icons/cash-coin.svg");
+}
+
+.createButton{
+    background-image:url("../../icons/pen-fill.svg");
+}
+
+.printButton{
+    background-image:url("../../icons/printer-fill.svg");
+}
+
+.addUser{
+    background-image:url("../../icons/addUser.svg");
+}
+
+.addClient{
+    background-image:url("../../icons/addClient.svg");
+}
+
+.checkButton{
+    background-image:url("../../icons/check.svg");
+}
+
+.disableClient{
+    background-image:url("../../icons/disableUser.svg");
+}
+
+.promoveBtn{
+    background-image:url("../../icons/promove.svg");
+    // background-size:28px;
+}
+.despromoveBtn{
+    background-image:url("../../icons/despromove.svg");
+}
+
+
+
+.submitButton{
+    @extend .btn;
+    background-color:$btn-bg;
+    color: white;
+    &:hover{
+        background-color: $btn-bg;
+        border:2px solid transparent
+    }
+}
+
+.fecharButton{
+    @extend .btn;
+    background-color:transparent;
+    color: $btn-close-bg;
+    &:hover{
+        background-color: $btn-close-bg;
+        border:1px solid transparent;
+
+    }
+}
+
+
+.select-box{
+   @extend .btn;
+    &:hover{
+        background:transparent;
+        color:$btn-2-color;
+    }
+
+}
