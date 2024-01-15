@@ -1,0 +1,86 @@
+{% load static %}
+
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="{% static 'styles/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/css/userpageStyle.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/css/elements.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/css/homeStyle.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/css/components.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/css/select2.min.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/css/datatables.min.css' %}">
+
+    <script src="{% static 'js/jquery-3.3.1.js' %}"></script>
+</head>
+
+<body>
+
+    <div class="simple-page">
+        <div class="simple-page-titlediv">
+            <div class="simple-page-titlediv-button">
+                <button class="backButton"></button>
+            </div>
+            <div class="simple-page-titlediv-title">
+                <h2>Pagina de usuário</h2>
+            </div>
+        </div>
+
+        <div class="simple-page-bodydiv">
+
+            <div class="simple-page-bodydiv-userinfo">
+                <br>
+                    <div >
+                        <div>
+                            <p>Nome: </p>
+                            <input type="text" class="formTextInput" name="first_name" id="first_name" value="{{ user.first_name }}">    
+                        </div>
+                        <button type="button" class="updateButton"></button>
+                    </div>
+    
+                    <div >
+                        <div>
+                            <p>Apelido: </p>
+                            <input type="text" class="formTextInput" name="last_name" id="last_name" value="{{ user.last_name }}">    
+                        </div>
+                        <button type="button" class="updateButton"></button>
+                    </div>
+    
+                    <div>
+                        <div>
+                            <p>Usuário: </p>
+                            <input type="text" class="formTextInput" name="username" id="username" value="{{ user.username }}">    
+                        </div>
+                        <button type="button" class="updateButton"></button>
+                    </div>
+
+                    <div>
+                        <p style="padding-top:6px">Senha:</p>
+                        <button type="button" class="btn" >Alterar a senha</button>
+                    </div>                
+
+            </div>
+            
+        </div>
+
+    </div>
+
+
+
+
+
+
+    <script>
+        $('document').ready(function(){
+            $('.backbutton').click(()=>{
+                window.location.href="../../"
+            })  
+        })
+          
+    </script>
+    
+</body>
+</html>

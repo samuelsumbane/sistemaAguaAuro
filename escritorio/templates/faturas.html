@@ -262,7 +262,7 @@
                             $('#consumofaturado').attr('disabled', true)
                             $('#faturaForm')[0].reset()
                             if (response['data'] == "200"){
-                                faturaCriadaComSucesso()
+                                criadoComSucesso('Fatura', 'a')
                             }else{
                                 faturaEditadaComSucesso()
                             }

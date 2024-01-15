@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
@@ -8,9 +8,12 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login as auth_login, logout
 
 from contas.forms import ContasCadastrarForm
+from random import randint
+
+
 
 class ContaCreatView(CreateView):
     model = User
@@ -30,14 +33,15 @@ def signin(request):
         username = request.POST['username']
         password = request.POST['password']
         
-        user = authenticate(username=username, password=password)
+        user = authenticate(request, username=username, password=password)
         
-        if user is None:
-            return HttpResponse('Invalid credentials.')
+        if user is not None:
+            auth_login(request, user)
+            return redirect('/') 
         else:
-            login(request, user)
-            return redirect('/')
-            
+            return HttpResponse('Invalid credentials.')
+
+      
                     
 def signout(request):
     logout(request)
@@ -46,19 +50,44 @@ def signout(request):
 
 def signup(request):
     if request.method == 'POST':
+
+        letras = ('0', '1', '2', '3', '4', '5', '6', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',)
+        senha = ''
+        for a in range(5):
+            senha += str(letras[randint(2, 8)])
+
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
         username = request.POST['username']
-        password = request.POST['password']
-        email = request.POST['email']
+        # password = request.POST['password']
         newuser = User.objects.create_user(
             first_name=first_name,
             last_name=last_name,
             username=username,
-            password=password,
-            email=email
+            password=senha
         )
         try:
             newuser.save()
+            data = '200'
+            return JsonResponse({'data':data, 'password':senha})    
+            
         except:
             return HttpResponse('Something went wrong')
+        
+        
+        # data = (first_name, last_name, username, senha)
+        # return JsonResponse({'data':data})    
+        
+
+def usuario(request):
+    usuarios = User.objects.all()
+    return render(request, "usuario.html", {"usuarios": usuarios})
+
+
+def login(request):
+    return render(request, "registration/login.html")
+    
+    
+def userpage(request):
+    return render(request, "userpage.html")
+    

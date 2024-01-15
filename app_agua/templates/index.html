@@ -3,6 +3,115 @@
 
 {% block conteudo %}
 
-<h2>This is home page</h2>
+<script>
+  $('document').ready(function(){
+    $('#userprofile').click(()=>{
+      window.location.href = "userpage"
+    })
+  })
+  
+</script>
+
+
+<main>
+    <div class="home-page">
+    
+        <div class="home-top">
+            <div class="home-top-left"></div>
+    
+            <div class="home-top-right">
+    
+                <div class="home-top-right-username">
+                    <!-- <p>{user_name}</p> -->
+                    <p>{{ user.first_name }}</p>
+                </div>
+                <div class="home-top-right-userprofile" id="userprofile">
+
+                </div>
+            </div>
+        </div>
+     
+        <div class="home-center">
+    
+            <div class="home-center-first">
+      
+              <div class="home-center-first-left">
+                <div>
+                  <h2>Clientes</h2>
+                  <h2>89</h2>
+                </div>
+
+                <div>
+                  <div>
+                    <h3>Inativos</h3>
+                    <h4>7</h4>
+                  </div>
+
+                  <div>
+                    <h3>Ativos</h3>
+                    <h4>8</h4>
+                  </div>
+                </div>
+              
+              </div>
+      
+              <div class="home-center-first-center">
+                <div>
+                  <h2>Usuários</h2>
+                  <h2>7</h2>
+                </div>
+
+                <div>
+                  <div>
+                    <h3>Inativos</h3>
+                    <h4>2</h4>
+                  </div>
+
+                  <div>
+                    <h3>Ativos</h3>
+                    <h4>5</h4>
+                  </div>
+                  
+                  <div>
+                    <h3>Online</h3>
+                    <h4>1</h4>
+                  </div>
+                </div>
+              
+              </div>
+      
+              <!-- <div class="home-center-first-right">
+                <p>Usúarios online</p>
+              </div> -->
+      
+            </div>
+      
+            <div class="home-center-second">
+              <div class="home-center-second-chart">
+      
+                  <div class="home-center-second-chart-1">  
+                    <!-- <BarchartDiv pagvalues={pagvalues} /> -->
+                  </div> 
+                
+                 <!-- para chart de loja (Caso pressiga)
+                    <div class="home-center-second-chart-2">
+                  <BarChart /> 
+                </div>  -->
+      
+              </div>
+              
+              <div class="home-center-second-date">
+                <h2>12:30</h2>
+                <br />
+                <h3>14.01.2024</h3>
+              </div>
+            </div>
+          </div>
+      
+    </div>
+    
+</main>
+
+
 {% endblock %}
 

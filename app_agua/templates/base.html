@@ -37,14 +37,20 @@
                 <a href="{% url 'clientes' %}" class="sidebar-btn sidebar-btn-clientes">Clientes</a>
 
                 <a href="{% url 'faturas' %}" class="sidebar-btn sidebar-btn-gerencia">Gerencia</a>
+                
+                <a href="{% url 'usuario' %}" class="sidebar-btn sidebar-btn-usuarios">Usuários</a>
 
-                <a href="{% url 'definicoes' %}" class="sidebar-btn sidebar-btn-definicoes">Definicoes</a>
+                <a href="{% url 'definicoes' %}" class="sidebar-btn sidebar-btn-definicoes">Definições</a>
+
 
                 {% if user.is_authenticated %}
-                    <p>{{ user.username }}</p>
+                    <a href="{% url 'signout' %}" class="sidebar-btn sidebar-btn-sair">Sair</a>
                 {% else %}
-                    <a href="{% url 'login' %}">Logar</a>
+                        <script>
+                            window.location.href = "login";
+                        </script>
                 {% endif %}
+
 
             </div>
 

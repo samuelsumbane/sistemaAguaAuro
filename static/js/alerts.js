@@ -85,10 +85,18 @@ function faturaNaoPodeSerEditada(){
     })    
 }
 
-function faturaCriadaComSucesso(){
+function criadoComSucesso(objecto, genero='o'){
     swal({
         icon: "success",
-        title: 'Fatura criada com sucesso!',
+        title: `${objecto} criad${genero} com sucesso!`,
+    })    
+}
+
+function userCadastradoComSucesso(senha){
+    swal({
+        icon: "success",
+        title: 'Usuário adicionado com sucesso!',
+        text: `A senha inicial é ${senha}`
     })    
 }
 

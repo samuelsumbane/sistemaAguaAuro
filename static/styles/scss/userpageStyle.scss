@@ -1,0 +1,64 @@
+@use 'abstracts' as *;
+
+.simple-page{
+    @include wh(100%, 100%);
+    // background:red;
+    background: radial-gradient(circle, rgb(203, 215, 226), white);
+
+    &-titlediv{
+        height: 70px;
+        display: flex;
+
+        &-button{
+            width: 15%;
+            display: flex;
+
+            & > button{margin:auto;}
+        }
+
+        &-title{
+            width: 85%;
+            color: black;
+            
+            & > h2{
+                padding-top:20px;
+            }
+        }
+    }
+
+    &-bodydiv{
+        height: calc(100% - 70px);
+
+        &-userinfo{
+            width:50%;
+            min-height: 300px;
+            background:white;
+            border-radius: $div-radius;
+            margin:auto;
+            margin-top:40px;
+
+            & > div{
+                // margin:20px 0 0 12px;
+                margin:20px auto 0 auto;
+                // background:red;
+                width:90%;
+                display:flex;
+                justify-content: space-around;
+
+                & > div{
+                    width:60%;
+                    // background:red;
+                    & > input{
+                        width:100% !important;
+                    }
+                }
+                
+                & > button{
+                    margin:auto 0 auto 0;
+                }
+            }
+        }
+
+    }
+
+}

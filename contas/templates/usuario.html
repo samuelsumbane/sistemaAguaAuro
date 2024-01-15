@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+
+{% block conteudo %}
+    <script>
+
+      $(document).ready(function(){
+
+
+        $('#addBtn').click(()=>{
+          // alert('clicked')
+          document.querySelector('.min-modal').classList.add('showModal')
+        })
+
+        $('.fecharButton').click(()=>{
+            document.querySelector('.min-modal').classList.remove("showModal")
+        });
+
+        $('#userForm').submit(function(e){
+          e.preventDefault();
+          $.ajax({
+              type: 'POST',
+              url: '{% url "signup"  %}',
+              data: $(this).serialize(),
+              dataType:"json",
+              success: function (response){
+                console.log(response['data'])
+
+                if(response['data'] == '200'){
+                  $('#userForm')[0].reset()
+                  userCadastradoComSucesso(response['password'])
+                }
+                // login, 64642
+              }, error: function(response){
+                console.log('Erro: ', response)
+              }
+          })   
+        })
+
+      })
+      
+
+    </script>
+
+
+    <div class="user-page">
+        <div class='user-page-header'>
+            <div class="titleDiv">
+                <h2>Usuários activos</h2>
+            </div>
+        
+            <div class="navDiv">
+                <button class="addUser" id="addBtn" style="margin-right:10px" title="Adicionar usuário"></button>
+                <button class="btn" id="inativosBtn" style="margin-right:10px" title="">Inactivos</button>
+            </div>
+        </div>
+
+        <div class='user-page-body'>            
+            <div class="user-page-body-main">
+                <!-- <ListUsers value='activos'/>  -->
+                {% for usuario in usuarios %}
+                  <div class="user-div">
+                    <div class="user-div-username">
+                        <p>Nome: {{ usuario.first_name }}</p> 
+                        <!-- {user_name} -->
+                    </div>
+                    <div class="user-div-nivel">
+                        <p>Nivel:</p>
+
+                        {% if not usuario.is_superuser %}
+                          <p>Admin</p>
+                        {% else %}
+                          <p>Usuário</p>
+                        {% endif %}
+
+
+                    </div>
+                    <div class="user-div-buttons">
+                              
+                        {% if not usuario.is_active %}
+                          <button class="activeUser" title="Activar"></button>
+                        {% else %}
+                          <button class="disableUser" title="Desactivar"></button>
+                        {% endif %}
+
+                        {% if not usuario.is_superuser %}
+                          <button class="promoveBtn" title="Promover o usúario"></button>
+                        {% else %}
+                          <button class="despromoveBtn" title="Despromover o usúario"></button>
+                        {% endif %}
+
+                        <button class="deleteButton" id={user_id} title="Deletar"></button>
+        
+                    </div>
+                  </div>
+                {% endfor %}        
+            </div>
+            <!-- </Suspense> -->
+            
+            <!-- {<UserForm />} -->
+            <div class="min-modal">
+                <div class="min-modal-header">
+                  <h2 class="min-modal-title">Adicionar usuário</h2>
+                </div>
+                <div class="min-modal-body">
+                  <form class='modalform' id="userForm">
+                    {% csrf_token %}
+                    <div>
+                      <label for="first_name">Primeiro nome</label>
+                      <input type="text" class="formTextInput" name='first_name' id='first_name' />
+                    </div>
+      
+                    <div>
+                      <label for="last_name">Apélido</label>
+                      <input type="text" class="formTextInput" name='last_name' id='last_name' />
+                    </div>
+      
+                    <div>
+                      <label for="username">Nome de usuário</label>
+                      <input type="text" class="formTextInput" name='username' id='username'/>
+                    </div>
+      
+                    <div class='nivelRadios' style="display:flex;flex-Direction:column">
+                      <label >Cargo</label> 
+                      <select name="user_nivel" class="formTextInput" id="user_nivel" >
+                        <option value="user">Usuário</option>
+                        <option value="admin">Administrador</option>
+                      </select>
+                    </div> 
+      
+                    <div class="min-submit-buttons">
+                        <button class="fecharButton" type="button">Fechar</button>
+                        <button class="submitButton" type="submit">Submeter</button>
+                    </div>
+                  </form>
+                  </div>
+                <div class="min-modal-footer"></div>
+              </div>
+
+        </div>
+
+        <div class='user-page-footer'></div>
+
+    </div>
+
+
+{% endblock %}
