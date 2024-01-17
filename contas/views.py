@@ -75,9 +75,46 @@ def signup(request):
             return HttpResponse('Something went wrong')
         
         
-        # data = (first_name, last_name, username, senha)
-        # return JsonResponse({'data':data})    
+def deluser(request):
+    if request.method == 'GET':
+        id = request.GET['id']
+        try:
+            User.objects.filter(id=id).delete()
+            data = '200'
+        except:
+            data = '201'            
+        return JsonResponse({'data':data})
         
+        
+
+def modifyUser(request):
+    if request.method == 'GET':
+        id = request.GET['id']
+        action = request.GET['action']                          
+            
+        try:
+            user = User.objects.get(id=id)
+
+            if action == 'activeUser':
+                user.is_active = True          
+                
+            elif action == 'disableUser':
+                user.is_active = False          
+                              
+            elif action == 'promoveUser':
+                user.is_superuser = True                
+                
+            elif action == 'despromoveUser':
+                user.is_superuser = False                
+        
+            user.save()
+            data = '200'
+        except:
+            data = '201'            
+        return JsonResponse({'data':data})
+        
+        
+
 
 def usuario(request):
     usuarios = User.objects.all()
@@ -90,4 +127,6 @@ def login(request):
     
 def userpage(request):
     return render(request, "userpage.html")
+        
+    
     

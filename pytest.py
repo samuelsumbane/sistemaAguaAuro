@@ -7,3 +7,8 @@ senha = ''
 for a in range(5):
     senha += str(letras[randint(2, 8)])
 print(senha)
+
+
+
+
+

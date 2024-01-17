@@ -91,6 +91,41 @@
       
                   <div class="home-center-second-chart-1">  
                     <!-- <BarchartDiv pagvalues={pagvalues} /> -->
+                    <div class="datesChart" id="chart">
+                      <canvas id="datesChart"></canvas>
+                    </div>
+                      
+                      
+                      <script>
+                        new Chart(document.getElementById("datesChart"), {
+                            type: 'bar',
+                            data: {
+                            // labels: json_encode($days),
+                            labels: ['se', 'ter', 'qua'],
+                            datasets: [
+                                {
+                                barPercentage: 1,
+                                barThickness: 18,
+                                maxBarThickness: 100,
+                                minBarLength: 14,
+                                label: "Lucro Mensal",
+                                type: "bar",
+                                backgroundColor:'rgb(0, 57, 82)',
+                                data: ['32', '54',  '93'],
+                                }
+                            ]
+                            },
+                            options: {
+                            title: {
+                                display: true,
+                                text: 'Lucro mensal de todos os productos'
+                            },
+                            legend: { display: false }
+                            },
+                            plugins:[ChartDataLabels]
+                        });
+                    </script>
+
                   </div> 
                 
                  <!-- para chart de loja (Caso pressiga)

@@ -5,10 +5,7 @@
     <script>
 
       $(document).ready(function(){
-
-
         $('#addBtn').click(()=>{
-          // alert('clicked')
           document.querySelector('.min-modal').classList.add('showModal')
         })
 
@@ -37,21 +34,96 @@
           })   
         })
 
+        for(const a of document.querySelectorAll('.deleteButton')){
+          a.addEventListener('click', ()=>{
+
+            swal({
+              title: "Tem certeza?",
+              text: "Essa acção não pode ser revertida!",
+              icon: "warning",
+              buttons: true,
+              dangerMode: true,
+              })
+              .then((willDelete) => {
+              if (willDelete) {
+                let thisid = a.getAttribute('id')
+                $.ajax({
+                  type: 'GET',
+                  url: '{% url "deluser"  %}',
+                  data: {id:thisid},
+                  dataType:"json",
+                  success: function (response){
+                    if(response['data'] == '200'){
+                      userCadastradoComSucesso(response['password'])
+                      window.location.href = '/usuario' // have to fix it
+                    }else{
+                      alert('Houve um erro inesperado')
+                    }
+                    // login, 64642
+                  }, error: function(response){
+                    console.log('Erro: ', response)
+                  }
+                })
+              }
+            });
+            // console.log(a)
+          })
+        }
+
+        var btns = ['activeUser', 'disableUser', 'promoveUser', 'despromoveUser']
+
+        btns.forEach(element => {
+          for(const a of document.querySelectorAll(`.${element}`)){
+            a.addEventListener('click', ()=>{
+
+              let thisid = a.getAttribute('id')
+              let action = element
+              $.ajax({
+                type: 'GET',
+                url: '{% url "modifyUser"  %}',
+                data: {id:thisid, action:action},
+                dataType:"json",
+                success: function (response){
+                  console.log(response['data'])
+                  console.log(response['key'])
+                  if(response['data'] == '200'){
+                    window.location.href = '/usuario' // have to fix it
+                  }else{
+                    alert('Houve um erro inesperado')
+                  }// login, 64642
+                }, error: function(response){
+                  console.log('Erro: ', response)
+                }
+              })
+            })
+          }
+
+        });
+        
       })
-      
-
     </script>
-
 
     <div class="user-page">
         <div class='user-page-header'>
             <div class="titleDiv">
-                <h2>Usuários activos</h2>
+                <h2>Usuários</h2>
             </div>
         
             <div class="navDiv">
-                <button class="addUser" id="addBtn" style="margin-right:10px" title="Adicionar usuário"></button>
-                <button class="btn" id="inativosBtn" style="margin-right:10px" title="">Inactivos</button>
+
+              <div class="userLegend">
+                <div class="redBall">
+                  <div></div> &nbsp;
+                  <p>Inativos</p>
+                </div>
+                <div class="blueBall">
+                  <div></div> &nbsp;
+                  <p>Ativos</p>
+                </div>
+              </div>
+
+              <button class="addUser" id="addBtn" style="margin-right:10px" title="Adicionar usuário"></button>
+
             </div>
         </div>
 
@@ -59,39 +131,41 @@
             <div class="user-page-body-main">
                 <!-- <ListUsers value='activos'/>  -->
                 {% for usuario in usuarios %}
-                  <div class="user-div">
+                  <div class="user-div user-div{{ usuario.is_active }}">
                     <div class="user-div-username">
                         <p>Nome: {{ usuario.first_name }}</p> 
-                        <!-- {user_name} -->
                     </div>
                     <div class="user-div-nivel">
                         <p>Nivel:</p>
-
+<!-- a5b4b -->
                         {% if not usuario.is_superuser %}
                           <p>Admin</p>
                         {% else %}
                           <p>Usuário</p>
                         {% endif %}
 
-
                     </div>
-                    <div class="user-div-buttons">
-                              
+                    {% if user.id != usuario.id %}
+                      <div class="user-div-buttons">
                         {% if not usuario.is_active %}
-                          <button class="activeUser" title="Activar"></button>
+                          <button class="activeUser" id="{{ usuario.id }}" title="Activar"></button>
                         {% else %}
-                          <button class="disableUser" title="Desactivar"></button>
+                          <button class="disableUser" id="{{ usuario.id }}" title="Desactivar"></button>
                         {% endif %}
 
                         {% if not usuario.is_superuser %}
-                          <button class="promoveBtn" title="Promover o usúario"></button>
+                          <button class="promoveBtn promoveUser" id="{{ usuario.id }}" title="Promover o usúario"></button>
                         {% else %}
-                          <button class="despromoveBtn" title="Despromover o usúario"></button>
+                          <button class="despromoveBtn despromoveUser" id="{{ usuario.id }}" title="Despromover o usúario"></button>
                         {% endif %}
 
-                        <button class="deleteButton" id={user_id} title="Deletar"></button>
-        
-                    </div>
+                        <button class="deleteButton" id="{{ usuario.id }}" title="Deletar"></button>      
+                      </div>
+                    {% else %}
+
+                    {% endif %}
+
+                    
                   </div>
                 {% endfor %}        
             </div>

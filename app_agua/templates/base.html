@@ -9,10 +9,16 @@
     <link rel="stylesheet" href="{% static 'styles/css/elements.css' %}">
     <link rel="stylesheet" href="{% static 'styles/css/homeStyle.css' %}">
     <link rel="stylesheet" href="{% static 'styles/css/components.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/css/tooltip.css' %}">
     <link rel="stylesheet" href="{% static 'styles/css/select2.min.css' %}">
     <link rel="stylesheet" href="{% static 'styles/css/datatables.min.css' %}">
 
     <script src="{% static 'js/jquery-3.3.1.js' %}"></script>
+    <script src="{% static 'js/chart.js' %}"></script>
+    <script src="{% static 'js/chartjs-plugin-datalabels.js' %}"></script>
+    <script src="{% static 'js/chartjs-plugin-labels-dv.min.js' %}"></script>
+
+
 </head>
 
 <body>
@@ -22,11 +28,11 @@
         <div class="sidebar sidebar-item">
             <div class="sidebar-header-div">
                 <div id="div-hamburger sidebar-item">
-                    <div class="hamburger sidebar-item" onClick={toggleSideBarItems}>
+                    <!-- <div class="hamburger sidebar-item" onClick={toggleSideBarItems}>
                         <span class="bar sidebar-item"></span>
                         <span class="bar sidebar-item"></span>
                         <span class="bar sidebar-item"></span>
-                    </div>
+                    </div> -->
                 </div>
             </div>
 
@@ -36,7 +42,9 @@
 
                 <a href="{% url 'clientes' %}" class="sidebar-btn sidebar-btn-clientes">Clientes</a>
 
-                <a href="{% url 'faturas' %}" class="sidebar-btn sidebar-btn-gerencia">Gerencia</a>
+                <a href="{% url 'faturas' %}" class="sidebar-btn sidebar-btn-gerencia">Gerência</a>
+                
+                <a href="{% url 'atividades' %}" class="sidebar-btn sidebar-btn-gerencia">Atividades</a>
                 
                 <a href="{% url 'usuario' %}" class="sidebar-btn sidebar-btn-usuarios">Usuários</a>
 
@@ -47,7 +55,7 @@
                     <a href="{% url 'signout' %}" class="sidebar-btn sidebar-btn-sair">Sair</a>
                 {% else %}
                         <script>
-                            window.location.href = "login";
+                            window.location.href = "../accounts/login";
                         </script>
                 {% endif %}
 

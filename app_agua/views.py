@@ -180,4 +180,50 @@ def updateDef(request):
             response = '200'
             return JsonResponse({'data': response})
 
+# def atividades(r)
+
+
+class atividade(ListView):
+    model = Atividade
+    template_name = "atividades.html"
+
+    # @login_required(login_url='/contas/templates/login.html')
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.GET.get("datatables"):
+            draw = int(self.request.GET.get("draw", "1"))
+            length = int(self.request.GET.get("length", "10"))
+            start = int(self.request.GET.get("start", "0"))
+            sv = self.request.GET.get("search[value]", None)
+            qs = self.get_queryset().order_by("act_id")
+            if sv:
+                qs = qs.filter(
+                    Q(acao__icontains=sv)
+                    | Q(valor__icontains=sv)
+                    | Q(dia__icontains=sv)
+                    | Q(usuario__icontains=sv)
+                )
+            filtered_count = qs.count()
+            qs = qs[start: start + length]
+
+            data = []
+            for ativi in qs:
+                row_data = {
+                    'act_id': ativi.act_id,
+                    'valor': ativi.valor,
+                    'dia': ativi.dia,
+                    'hora': ativi.hora,
+                    'usuario': ativi.usuario
+                }
+                data.append(row_data)
+
+            return JsonResponse(
+                {
+                    "recordsTotal": self.get_queryset().count(),
+                    "recordsFiltered": filtered_count,
+                    "draw": draw,
+                    "data": data,
+                },
+                safe=False,
+            )
+        return super().render_to_response(context, **response_kwargs)
 

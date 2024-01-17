@@ -129,3 +129,37 @@ body{
 
    
 }
+
+
+.userLegend{
+    display:flex;
+    width:30%;
+    // background:green;
+    justify-content: space-between;
+    margin-right:10%;
+
+    & > div{
+        display: flex;
+        & > div{
+            @include wh(20px, 20px);
+            border-radius:50%;
+        }
+    }
+
+    .redBall{
+        & > div{background:rgb(239, 130, 130);}
+    }
+
+    .blueBall{
+        & > div{background:rgba(114, 228, 248, 0.799);}
+    }
+}
+
+
+.hideDiv{
+    display:none !important;
+}
+
+.showDiv{
+    display:block !important;
+}

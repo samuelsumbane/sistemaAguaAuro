@@ -85,31 +85,34 @@
             $("#addBtn").click(()=>{
                 document.querySelector('.min-modal').classList.add("showModal")
                 $('#action').val('create')
+                document.querySelector('.min-modal-title').textContent = "Adicionar cliente"
+
             })
 
             // close Model
             $('.fecharButton').click(()=>{
                 document.querySelector('.min-modal').classList.remove("showModal")
+                $('#clientForm')[0].reset()
+                document.querySelector('.min-modal-title').textContent = ""
+                
             });
 
-                $('#clientForm').submit(function(e){
-                    e.preventDefault();
-                    $.ajax({
-                        type: 'POST',
-                        url: '{% url "criarCliente"  %}',
-                        data: $(this).serialize(),
-                        dataType:"json",
-                        success: function (response){
-
-                            $('#clientForm')[0].reset()
-                            let t = $('#tabela').DataTable()
-                            t.ajax.reload()
-
-                        }, error: function(response){
-                            console.log('Erro: ', response)
-                        }
-                    })
-                });
+            $('#clientForm').submit(function(e){
+                e.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "criarCliente"  %}',
+                    data: $(this).serialize(),
+                    dataType:"json",
+                    success: function (response){
+                        $('#clientForm')[0].reset()
+                        let t = $('#tabela').DataTable()
+                        t.ajax.reload()
+                    }, error: function(response){
+                        console.log('Erro: ', response)
+                    }
+                })
+            });
 
 
                 $('#tabela').on('click', '.updateButton', function(e) {

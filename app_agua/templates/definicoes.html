@@ -54,45 +54,67 @@
                  })
             })
 
+            $('#todas').click(()=>{
+              for(const divI of document.querySelectorAll('.defDivConf')){ divI.classList.remove('hideDiv') }
+              for(const divI of document.querySelectorAll('.defDivConf')){ divI.classList.add('showDiv') }
+            })
+
+            $('#multar').click(()=>{
+              for(const divM of document.querySelectorAll('.defDivConf')){ divM.classList.remove('showDiv') }
+              for(const divM of document.querySelectorAll('.defDivConf')){ divM.classList.add('hideDiv') }
+              document.querySelector('.multar').classList.add('showDiv')
+            })
+            
+            $('#metrocubicobtn').click(()=>{
+              for(const divMC of document.querySelectorAll('.defDivConf')){ divMC.classList.remove('showDiv') }
+              for(const divMC of document.querySelectorAll('.defDivConf')){ divMC.classList.add('hideDiv') }
+              document.querySelector('.metrocubicoDiv').classList.add('showDiv')
+            })
+
+            $('#multabtn').click(()=>{
+              for(const divMu of document.querySelectorAll('.defDivConf')){ divMu.classList.remove('showDiv') }
+              for(const divMu of document.querySelectorAll('.defDivConf')){ divMu.classList.add('hideDiv') }
+              document.querySelector('.multa').classList.add('showDiv')
+            })
+
+            
+
         })
     </script>
 
 <div class="def-page">
     <div class="def-page-header">
       <div class='def-page-header-title'>
-        <h2>Definicoes</h2>
+        <h2>Definições</h2>
       </div>
     </div>
 
     <div class="def-page-body">
       <div class='def-page-body-search'>
-        <input type="search" name="" placeholder="Pesquisar" />
+        <input type="search" name="" placeholder="Pesquisar" class="hideDiv"/>
       </div>
 
       <div class="def-page-body-main">
           <div class='def-page-body-main-left'>
                <br />
             <ul>
-               <li class='def-page-body-main-left-item' >Todas</li>
-               <li class='def-page-body-main-left-item' >
+               <li class='def-page-body-main-left-item' id="todas" >Todas</li>
+               <li class='def-page-body-main-left-item' id="multastab">
                   Multa
-
-                      <div class='sub-item-div'>
-                          <ul>
-                              <button class='btnLabel'>Multar</button>
-
-                              <button class='btnLabel'>Percentagem da multa</button>
+                      <div class='sub-item-div sub-item-div-1'>
+                          <ul style="display:flex;flex-direction: column;">
+                              <button class='btnLabel' id="multar">Multar</button>
+                              <button class='btnLabel' id="multabtn">Valor da multa</button>
                           </ul>
                       </div>
                 </li>
 
                 <li class='def-page-body-main-left-item' >Metro cúbico
 
-                      <div class='sub-item-div'>
+                      <div class='sub-item-div sub-item-div-2'>
                           <ul>
                               <li></li>
-
-                              <button class='btnLabel'>Valor de metro cúbico</button>
+                              <button class='btnLabel' id="metrocubicobtn">Valor de metro cúbico</button>
                           </ul>
                       </div>
                 </li>
@@ -103,7 +125,7 @@
               <form action="" method="post" id="mainRightPartForm">
 
                 {% csrf_token %}
-                  <div class="defDivConf" >
+                  <div class="defDivConf " >
                     <h3 class="defDivConf-title">Consumo minimo</h3>
                     <p class="defDivConf-title">Consumo minimo de água (em metros)</p>
                     <input type="number" name="consumomin" id="consumomin" class="defInput"/>
@@ -115,19 +137,19 @@
                     <input type="number" name="taxafixa" id="taxafixa" class="defInput"/>
                   </div>
 
-                  <div class="defDivConf" >
+                  <div class="defDivConf multar" >
                     <h3 class="defDivConf-title">Multar</h3>
                     <p class="defDivConf-title">Os clientes podem ser ou não ser multados ao esceder a data limite de pagamento de faturas.</p>
                     <input type="checkbox" class='checkStyle' name="multar" id="multar" value="False"/>
                   </div>
 
-                  <div class="defDivConf" >
+                  <div class="defDivConf multa" >
                     <h3 class="defDivConf-title">Multa</h3>
                     <p class="defDivConf-title">Percentagem que será calculada da factura.</p>
                     <input type="number" name="multaforadoprazo" id="multaforadoprazo" class="defInput" />
                   </div>
 
-                  <div class="defDivConf" >
+                  <div class="defDivConf metrocubicoDiv" >
                     <h3 class="defDivConf-title">Metro cúbico</h3>
                     <p class="defDivConf-title">O custo de metro cúbico</p>
                     <input type="number" name="metrocubico" id="metrocubico" key="any" class="defInput" />

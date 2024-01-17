@@ -94,8 +94,8 @@ body{
             width:95%;
             height:95%;
             margin:auto;
-            border:1px solid $bg-secondary;
-            border-radius: $div-radius;
+            // border:1px solid $bg-secondary;
+            // border-radius: $div-radius;
             display: flex;
             flex-wrap: wrap;
             justify-content: space-around;
@@ -334,8 +334,12 @@ body{
                 width:20%;
                 max-width: 200px;
                 height: 100%;
-                border:1px solid $bg-primary !important;
-                border-radius: 0 $div-radius 0 0;
+                // border:1px solid $bg-primary !important;
+                border-left:1px solid white;
+                // border-bottom: white;
+                // border-radius: 0 $div-radius 0 0;
+                background:white;
+                box-shadow: 0 0 12px lightcyan;
                 padding-left: 5px;
 
                 &-item{
@@ -351,10 +355,10 @@ body{
                 .sub-item-div{
                     width: 95%;
                     margin-left:auto;
-                    color: rgb(187, 147, 96);
+                    color: rgb(224, 215, 203);
                     & ul li{
-                    list-style: none;
-                    cursor: pointer; 
+                       list-style: none;
+                       cursor: pointer; 
                     }
 
                     & ul li:hover{
@@ -432,7 +436,7 @@ body{
     border-radius:12px;
 }
 
-.user-div{
+.user-div, .user-divFalse{
     width:240px; 
     height:22%;
     min-height:100px;
@@ -475,6 +479,10 @@ body{
     &:hover{
         box-shadow: 0 0 14px rgb(2, 95, 189);
     }
+}
+
+.user-divFalse{
+    box-shadow: 0 0 15px rgb(203, 3, 3) !important;
 }
 
 .min-submit-buttons{
