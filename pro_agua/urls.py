@@ -7,7 +7,7 @@ from escritorio.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name="home"),
-    path('/', home, name="home"),
+    path('index/', home, name="home"),
     path('clientes/', clientes.as_view(), name="clientes"),
     path('criarCliente/', criarCliente, name="criarCliente"),
     path('selecionarTodosClientes/', selecionarTodosClientes, name="selecionarTodosClientes"),
@@ -18,5 +18,6 @@ urlpatterns = [
     path('', include('escritorio.urls')),
     path('', include('contas.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('atividades', atividade.as_view(), name="atividades")
+    path('atividades', atividade.as_view(), name="atividades"),
+    path('relatorio', relatorio, name="relatorio")
 ]

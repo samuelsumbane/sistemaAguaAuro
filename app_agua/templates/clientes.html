@@ -86,7 +86,6 @@
                 document.querySelector('.min-modal').classList.add("showModal")
                 $('#action').val('create')
                 document.querySelector('.min-modal-title').textContent = "Adicionar cliente"
-
             })
 
             // close Model
@@ -94,7 +93,6 @@
                 document.querySelector('.min-modal').classList.remove("showModal")
                 $('#clientForm')[0].reset()
                 document.querySelector('.min-modal-title').textContent = ""
-                
             });
 
             $('#clientForm').submit(function(e){
@@ -181,6 +179,7 @@
                     </div>
                     <button type='button' class="addButton" id="fillCodeButton"></button>
                   </div>
+                  <input type="hidden" name="userid" id="userid" value="{{ user.id }}">
                   <div>
                     <label>Nome</label>
                     <input type="text" class="formTextInput" placeholder="Nome do cliente" name="nome" id="nome" />

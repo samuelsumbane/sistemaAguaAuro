@@ -3,11 +3,15 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from .models import *
 from django.contrib.auth.decorators import login_required
-
+from datetime import datetime 
 # from escritorio.models import *
 from app_agua.models import *
 from django.db.models import Q
 # Create your views here.
+dataEHoraAtual = datetime.now()
+from pro_agua.functions import *
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 def home(request):
     return render(request, 'index.html')
@@ -59,11 +63,24 @@ class clientes(ListView):
         return super().render_to_response(context, **response_kwargs)
 
 
+def saveAtivity(acao, valor, userid, validadeValue='clientes', docid=0):
+    diaHoje = dataEHoraAtual.strftime('%d.%m.%Y')
+    ativi = Atividade()
+    ativi.acao = acao 
+    ativi.valor = valor
+    ativi.dia = diaHoje
+    ativi.hora = retornarHora()
+    usuario = User.objects.get(id=userid)
+    ativi.usuario = usuario
+    ativi.vda = retornarValidade(validadeValue)
+    ativi.doc_id = docid
+    ativi.save()
+
 
 def criarCliente(request):
     action = request.POST.get('action')
     id = request.POST.get('idInput')
-
+    
     if request.method == "POST":
         cliente = ""
         if action == "create":
@@ -76,13 +93,16 @@ def criarCliente(request):
         vnome = request.POST.get("nome")
         vtelefone = request.POST.get("telefone")
         vendereco = request.POST.get("endereco")
+        userid = request.POST.get('userid')
 
         cliente.codigo_cliente = vcodigo
         cliente.nome_cliente = vnome
         cliente.telefone_cliente = vtelefone
         cliente.endereco_cliente = vendereco
+        diaHoje = dataEHoraAtual.strftime('%d.%m.%Y')
+        # atividade
+        saveAtivity('C. Cliente', vnome, userid, 'clientes', 0)        
         cliente.save()
-
         data = "success"
 
         return JsonResponse({'data': data})
@@ -180,14 +200,11 @@ def updateDef(request):
             response = '200'
             return JsonResponse({'data': response})
 
-# def atividades(r)
-
 
 class atividade(ListView):
     model = Atividade
     template_name = "atividades.html"
 
-    # @login_required(login_url='/contas/templates/login.html')
     def render_to_response(self, context, **response_kwargs):
         if self.request.GET.get("datatables"):
             draw = int(self.request.GET.get("draw", "1"))
@@ -209,10 +226,11 @@ class atividade(ListView):
             for ativi in qs:
                 row_data = {
                     'act_id': ativi.act_id,
+                    'acao': ativi.acao,
                     'valor': ativi.valor,
                     'dia': ativi.dia,
                     'hora': ativi.hora,
-                    'usuario': ativi.usuario
+                    'usuario': ativi.usuario.first_name
                 }
                 data.append(row_data)
 
@@ -227,3 +245,10 @@ class atividade(ListView):
             )
         return super().render_to_response(context, **response_kwargs)
 
+
+
+def relatorio(request):
+    # rel = Atividade.objects.filter().values()
+    rel = Atividade.objects.filter().values()
+    data = list(rel)
+    return JsonResponse({'data': data})

@@ -1,5 +1,7 @@
 from django.db import models
 from django.views.generic import ListView
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 class Cliente(models.Model):
@@ -13,14 +15,14 @@ class Cliente(models.Model):
         return self.nome_cliente
 
 
-class Usuario(models.Model):
-    user_id = models.AutoField(primary_key=True)
-    user_name = models.CharField(max_length=255, default="null")
-    user_username = models.CharField(max_length=40, default="null")
-    user_pass = models.CharField(max_length=10, default="null")
-    user_nivel = models. CharField(max_length=10, default="null")
-    user_key = models.IntegerField(default="1")
-    user_status = models.CharField(max_length=10, default="null")
+# class Usuario(models.Model):
+#     user_id = models.AutoField(primary_key=True)
+#     user_name = models.CharField(max_length=255, default="null")
+#     user_username = models.CharField(max_length=40, default="null")
+#     user_pass = models.CharField(max_length=10, default="null")
+#     user_nivel = models. CharField(max_length=10, default="null")
+#     user_key = models.IntegerField(default="1")
+#     user_status = models.CharField(max_length=10, default="null")
 
 
 class Definicao(models.Model):
@@ -40,13 +42,12 @@ class Definicao(models.Model):
 class Atividade(models.Model):
     act_id = models.AutoField(primary_key=True)
     acao = models.CharField(max_length=20)
-    valor = models.FloatField()
+    valor = models.CharField(max_length=30)
     dia = models.CharField(max_length=10)
     hora = models.CharField(max_length=10)
-    usuario = models.ForeignKey(Usuario, on_delete=models.PROTECT)
-    # don't remember vda
-    vda = models.CharField(max_length=40)
-    doc_id = models.IntegerField()
+    usuario = models.ForeignKey(User, on_delete=models.PROTECT)
+    vda = models.CharField(max_length=40) # validade
+    doc_id = models.IntegerField(null=True)
 
 
 

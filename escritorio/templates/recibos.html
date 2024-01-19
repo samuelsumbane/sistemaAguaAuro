@@ -100,8 +100,7 @@
             $('.fecharButton').click(()=>{
                 document.querySelector('.medium-modal').classList.remove("showModal")
                 $('#reciboForm')[0].reset()
-                document.querySelector('#minRecibosDiv').innerHTML = ""
-                        
+                document.querySelector('#minRecibosDiv').innerHTML = ""                        
             })
 
             var defArray = ''
@@ -258,6 +257,8 @@
                                 <option>Selecionar cliente</option>
                             </select>
                         </div>
+
+                        <input type="hidden" name="userid" id="userid" value="{{ user.id }}">
 
                         <!-- fats a pagar -->
                         <div id="minRecibosDiv"></div>

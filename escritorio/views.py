@@ -6,6 +6,8 @@ from escritorio.models import *
 from django.db.models import Q
 from datetime import datetime
 from django.core.serializers import serialize
+from app_agua.views import saveAtivity
+
 
 dataEHoraAtual = datetime.now()
 
@@ -169,6 +171,7 @@ def criarFatura(request):
         valordafatura = request.POST.get('valorFatura')
         consumofaturado = request.POST.get('consumofaturado')
         action = request.POST.get('action')
+        userid = request.POST.get('userid')
         
         if action == "editarFatura":
             fatid = request.POST.get('fatid')
@@ -196,6 +199,8 @@ def criarFatura(request):
             fatura.valordafatura = valordafatura
             fatura.fat_emissao = fat_emissao
             fatura.save()
+
+            saveAtivity("F. Criada", valordafatura, userid, 'infinity')
             
             # criar minRecibo
             pag = Pagamento()
@@ -271,6 +276,7 @@ def pagarFatura(request):
     if request.method == "POST":
         # pagCode = request.POST.get('pagCode')
         divlen = request.POST.get('divsLen')
+        userid = request.POST.get('userid')
         
         for i in range(int(divlen)):
             valordafatura = request.POST.get(f"valorapagar{i}")
@@ -286,6 +292,7 @@ def pagarFatura(request):
                 pagamento.pag_totalpago += float(valordafatura)
                 pagamento.pag_divida -= float(divida)
                 pagamento.save()
+                saveAtivity("F. Paga", valordafatura, userid, 'infinity', id)
                 
                 data = "200"
         
