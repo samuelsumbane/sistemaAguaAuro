@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from .models import *
 from django.contrib.auth.decorators import login_required
-from datetime import datetime 
+from datetime import datetime, date 
 # from escritorio.models import *
 from app_agua.models import *
 from django.db.models import Q
@@ -217,7 +217,6 @@ class atividade(ListView):
                     Q(acao__icontains=sv)
                     | Q(valor__icontains=sv)
                     | Q(dia__icontains=sv)
-                    | Q(usuario__icontains=sv)
                 )
             filtered_count = qs.count()
             qs = qs[start: start + length]
@@ -248,7 +247,29 @@ class atividade(ListView):
 
 
 def relatorio(request):
-    # rel = Atividade.objects.filter().values()
-    rel = Atividade.objects.filter().values()
+    id = request.POST['userid']
+    usuario = User.objects.filter(id=id).values()
+    
+    idate_str = request.POST['initialdate']
+    fdate_str = request.POST['finaldate']
+
+    idate = datetime.strptime(idate_str, '%Y-%m-%d').date()
+    fdate = datetime.strptime(fdate_str, '%Y-%m-%d').date()
+
+    idate_str_formatted = idate.strftime('%d.%m.%Y')
+    fdate_str_formatted = fdate.strftime('%d.%m.%Y')
+
+    rel = Atividade.objects.filter(usuario_id=id, dia__range=(idate_str_formatted, fdate_str_formatted)).values()
     data = list(rel)
-    return JsonResponse({'data': data})
+    return JsonResponse({'data': data, 'user':list(usuario)})
+
+
+def numeroTotal(request):
+    clientLen = Cliente.objects.filter().count()
+    userLen = User.objects.filter().count()
+    userLenActive = User.objects.filter(is_active='True').count()
+        
+    return JsonResponse({'clientLen':clientLen, 'userLen':userLen, 'userLenActive':userLenActive})
+
+    
+    

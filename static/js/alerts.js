@@ -106,3 +106,11 @@ function faturaEditadaComSucesso(){
         title: 'Fatura atualizada com sucesso!',
     })    
 }
+
+function atividadeNaoEncontrada(){
+    swal({
+        icon: "warning",
+        title: 'Atividade não encontrada',
+        text: `Não houve atividade nas datas seleciondas`
+    })    
+}

@@ -55,9 +55,9 @@
               e.preventDefault()
               let initial = $('#initialdate').val()
               let final = $('#finaldate').val()
-              // if (initial == '' || final == ''){
-              //   camposNaoPreenchidos()
-              // }else{
+              if (initial == '' || final == ''){
+                camposNaoPreenchidos()
+              }else{
                 $.ajax({
                   type: 'POST',
                   url: '{% url "relatorio"  %}',
@@ -67,60 +67,69 @@
                     console.log(response['data'])
                     let dados = response['data']
                     let lendata = dados.length
-                    let fpaga = 0
-                    let fcriada = 0
-                    let vrecebido = 0
-                    for(a=0;a<lendata;a++){
-                      
-                      $('#tbodyActivitiesList').parent().append(`
-                        <tr style="padding-left:20px">
-                          <td>${dados[a]['acao']}</td>
-                          <td>${dados[a]['valor']}</td>
-                          <td>${dados[a]['dia']}</td>
-                          <td>${dados[a]['hora']}</td>
-                          <td>${dados[a]['usuario.first_name']}</td>
-                        </tr>
-                      `)
-                      if(dados[a]['acao'] == "F. Paga"){
-                        fpaga++;
-                        vrecebido += parseFloat(dados[a]['valor']) 
-                      }else if(dados[a]['acao'] == "F. Criada"){
-                        fcriada++
+                    if(lendata < 1){
+                      atividadeNaoEncontrada()
+                      $('#relatorioForm')[0].reset()
+                    }else{
+                      let fpaga = 0
+                      let fcriada = 0
+                      let vrecebido = 0
+                      let userdata = response['user']
+                      let fname = userdata[0]['first_name']
+                      let lname = userdata[0]['last_name']
+                      for(a=0;a<lendata;a++){                        
+                        $('#tbodyActivitiesList').parent().append(`
+                          <tr style="padding-left:20px">
+                            <td>${dados[a]['acao']}</td>
+                            <td>${dados[a]['valor']}</td>
+                            <td>${dados[a]['dia']}</td>
+                            <td>${dados[a]['hora']}</td>
+                            <td>${fname} ${lname}</td>
+                          </tr>
+                        `)
+                        if(dados[a]['acao'] == "F. Paga"){
+                          fpaga++;
+                          vrecebido += parseFloat(dados[a]['valor']) 
+                        }else if(dados[a]['acao'] == "F. Criada"){
+                          fcriada++
+                        }
                       }
+
+                      function printContent(el){var printData = document.getElementById(el);newWin = window.open("");newWin.document.write(printData.outerHTML);newWin.print();newWin.close();}
+
+                      var now = new Date()
+                      var hora = ("0" + now.getHours()).slice(-2)
+                      var minutos = ("0" + now.getMinutes()).slice(-2)
+                      var segundos = ("0" + now.getSeconds()).slice(-2)
+                      var hourmin = `${hora}:${minutos}` 
+                      document.querySelector('#hora').textContent = hourmin
+
+                      var dia = ("0" + now.getDate()).slice(-2);
+                      var monthcurrent = now.getMonth() + 1
+                      var mes = ("0" + monthcurrent).slice(-2);
+                      var anocompleto = now.getFullYear();
+                      var fulldate = `${dia}.${mes}.${anocompleto}`
+                      document.querySelector('#dia').textContent = fulldate
+                      
+                      document.querySelector('#faturascriadas').textContent = fcriada
+                      document.querySelector('#faturaspagas').textContent = fpaga
+                      document.querySelector('#valorrecebido').textContent = vrecebido
+                      
+                      document.querySelector('#parentMainDiv').style.display = 'block'
+                      printContent('parentMainDiv')
+                      document.querySelector('#parentMainDiv').style.display = 'none'
+                      $('#relatorioForm')[0].reset()
                     }
-
-                    var now = new Date()
-                    var hora = ("0" + now.getHours()).slice(-2)
-                    var minutos = ("0" + now.getMinutes()).slice(-2)
-                    var segundos = ("0" + now.getSeconds()).slice(-2)
-                    var hourmin = `${hora}:${minutos}` 
-                    document.querySelector('#hora').textContent = hourmin
-
-                    var dia = ("0" + now.getDate()).slice(-2);
-                    var monthcurrent = now.getMonth() + 1
-                    var mes = ("0" + monthcurrent).slice(-2);
-                    var anocompleto = now.getFullYear();
-                    var fulldate = `${dia}.${mes}.${anocompleto}`
-                    document.querySelector('#dia').textContent = fulldate
-                    
-
-                    document.querySelector('#faturascriadas').textContent = fcriada
-                    document.querySelector('#faturaspagas').textContent = fpaga
-                    document.querySelector('#valorrecebido').textContent = vrecebido
                                                     
                   }, error: function(response){
                       console.log('Erro: ', response)
                   }
                 })
-              // }
+              }
 
             })
 
         })    
-
-
-
-
 
     </script>
 
@@ -149,13 +158,15 @@
                   {% csrf_token %}
                 <div>
                     <label>Data inicial</label>
-                    <input type="date" class="formTextInput" name="initialdate" id="initialdate"/>
+                    <input type="date" class="formTextInput" name="initialdate" id="initialdate" />
                 </div>
 
                 <div>
                   <label>Data final</label>
                   <input type="date" class="formTextInput" name="finaldate" id="finaldate"/>
                 </div>
+
+                <input type="hidden" name="userid" id="userid" value="{{ user.id }}">
 
                 <div class="min-submit-buttons">
                     <button class="fecharButton" type="button">Cancelar</button>
@@ -171,7 +182,7 @@
         <div class='client-page-footer'></div>
         
         <div class="parentMainDiv" id="parentMainDiv"
-        style="width:570px;height:800px;background:white;margin:2% auto 0 auto;display:flex;flex-direction:column;">
+        style="width:570px;height:800px;background:white;margin:2% auto 0 auto;display:flex;flex-direction:column;display:none;">
 
         <div id="topdiv" style="width:98%;height:10%;background:white;margin:auto;margin-top:30px;display:flex">
             <h4 id="Dados" style="padding-left:10px">Relatório</h4>
@@ -193,19 +204,22 @@
                     <tbody id="tbodyActivitiesList"></tbody>
                 </table>
 
+                <div style="height:auto;">
+                  <div style="display: flex;height:17px;justify-items:start;">
+                    <h4 style="padding-left:8px;height:auto;">Faturas criadas:&nbsp; </h4>
+                    <h4 id="faturascriadas"></h4>
+                  </div> 
+                  <div style="display: flex;height:17px;">
+                    <h4 style="padding-left:8px;padding-top:-20px;">Faturas pagas: &nbsp;</h4>
+                    <h4 id="faturaspagas"></h4>
+                  </div>
+                  <div style="display: flex;height:20px;justify-items: center;">
+                    <h4 style="padding-left:8px">Valor recebido: &nbsp;</h4>
+                    <h4 id="valorrecebido"></h4>
+                  </div>
+                </div>
                 <br><br>                         
-                <div style="display: flex;">
-                  <h4 style="padding-left:8px">Faturas criadas:&nbsp; </h4>
-                  <h4 id="faturascriadas"></h4>
-                </div> 
-                <div style="display: flex;">
-                  <h4 style="padding-left:8px">Faturas pagas: &nbsp;</h4>
-                  <h4 id="faturaspagas"></h4>
-                </div>
-                <div style="display: flex;">
-                  <h4 style="padding-left:8px">Valor recebido: &nbsp;</h4>
-                  <h4 id="valorrecebido"></h4>
-                </div>
+                
             </div>
         </div>
         <!-- bottom -->

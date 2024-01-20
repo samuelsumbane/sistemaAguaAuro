@@ -38,7 +38,7 @@
     }
 }
 
-:is(.deleteButton, .disableButton, .disableUser, .updateButton, .payButton, .createButton, .addButton, .printButton, .addUser, .addClient, .checkButton, .disableClient, .activeUser, .promoveBtn, .despromoveBtn){
+:is(.deleteButton, .disableButton, .disableUser, .updateButton, .payButton, .createButton, .addButton, .printButton, .addUser, .addClient, .checkButton, .disableClient, .activeUser, .promoveBtn, .despromoveBtn, .activity){
     @extend .btn;
     width:30px;
     height:30px;
@@ -47,7 +47,7 @@
     background-color:#D6DBDC;
 }
 
-:is(.deleteButton, .disableButton, .disableUser, .updateButton, .payButton, .createButton, .addButton, .printButton, .addUser, .addClient, .checkButton, .disableClient, .activeUser, .promoveBtn, .despromoveBtn):hover{
+:is(.deleteButton, .disableButton, .disableUser, .updateButton, .payButton, .createButton, .addButton, .printButton, .addUser, .addClient, .checkButton, .disableClient, .activeUser, .promoveBtn, .despromoveBtn, .activity):hover{
     background-color:lightgray;
 }
 
@@ -111,6 +111,9 @@
     background-image:url("../../icons/despromove.svg");
 }
 
+.activity{
+    background-image:url("../../icons/activity.svg");
+}
 
 
 .submitButton{

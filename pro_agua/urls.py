@@ -12,6 +12,7 @@ urlpatterns = [
     path('criarCliente/', criarCliente, name="criarCliente"),
     path('selecionarTodosClientes/', selecionarTodosClientes, name="selecionarTodosClientes"),
     path('selecionarCliente/', selecionarCliente, name="selecionarCliente"),
+    path('numeroTotal', numeroTotal, name="numeroTotal"),
     path('definicoes/', definicao, name="definicoes"),
     path('selecionarDefinicoes/', selecionarDefinicoes, name="selecionarDefinicoes"),
     path('updateDef/', updateDef, name="updateDef"),    
@@ -19,5 +20,6 @@ urlpatterns = [
     path('', include('contas.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('atividades', atividade.as_view(), name="atividades"),
-    path('relatorio', relatorio, name="relatorio")
+    path('relatorio', relatorio, name="relatorio"),
+    
 ]
