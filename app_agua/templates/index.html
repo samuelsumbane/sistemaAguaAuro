@@ -19,7 +19,10 @@
             document.querySelector('#userlen').textContent = response['userLen']
             document.querySelector('#activeUser').textContent = response['userLenActive']
             document.querySelector('#disativedUser').textContent = (response['userLen'] - response['userLenActive'])
+            document.querySelector('#clientactive').textContent = (response['clientLenActive'])
+            document.querySelector('#clientdesactived').textContent = (response['clientLen'] - response['clientLenActive'])
 
+            clientLenActive
           }, error: function(response){
             console.log('Erro: ', response)
         }
@@ -59,12 +62,12 @@
                 <div>
                   <div>
                     <h3>Inativos</h3>
-                    <h4>7</h4>
+                    <h4 id="clientdesactived"></h4>
                   </div>
 
                   <div>
                     <h3>Ativos</h3>
-                    <h4>8</h4>
+                    <h4 id="clientactive"></h4>
                   </div>
                 </div>
               

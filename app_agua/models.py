@@ -10,19 +10,12 @@ class Cliente(models.Model):
     nome_cliente = models.CharField(max_length=255)
     telefone_cliente = models.CharField(max_length=40)
     endereco_cliente = models.CharField(max_length=40)
+    is_active = models.BooleanField(null=True)
+    created_at = models.CharField(max_length=15, null=True)
 
     def __str__(self):
         return self.nome_cliente
 
-
-# class Usuario(models.Model):
-#     user_id = models.AutoField(primary_key=True)
-#     user_name = models.CharField(max_length=255, default="null")
-#     user_username = models.CharField(max_length=40, default="null")
-#     user_pass = models.CharField(max_length=10, default="null")
-#     user_nivel = models. CharField(max_length=10, default="null")
-#     user_key = models.IntegerField(default="1")
-#     user_status = models.CharField(max_length=10, default="null")
 
 
 class Definicao(models.Model):

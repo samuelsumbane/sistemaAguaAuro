@@ -80,12 +80,15 @@ def saveAtivity(acao, valor, userid, validadeValue='clientes', docid=0):
 def criarCliente(request):
     action = request.POST.get('action')
     id = request.POST.get('idInput')
+    diaHoje = dataEHoraAtual.strftime('%d.%m.%Y')
     
     if request.method == "POST":
         cliente = ""
         if action == "create":
             cliente = Cliente()
-
+            cliente.created_at = diaHoje
+            cliente.is_active = True
+            
         elif action == "update":
             cliente = Cliente.objects.get(id_cliente=id)
 
@@ -266,10 +269,12 @@ def relatorio(request):
 
 def numeroTotal(request):
     clientLen = Cliente.objects.filter().count()
+    clientLenActive = Cliente.objects.filter(is_active='True').count()
+    
     userLen = User.objects.filter().count()
     userLenActive = User.objects.filter(is_active='True').count()
         
-    return JsonResponse({'clientLen':clientLen, 'userLen':userLen, 'userLenActive':userLenActive})
+    return JsonResponse({'clientLen':clientLen, 'clientLenActive':clientLenActive, 'userLen':userLen, 'userLenActive':userLenActive})
 
     
     
