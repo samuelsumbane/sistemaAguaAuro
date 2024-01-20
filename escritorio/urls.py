@@ -10,5 +10,6 @@ urlpatterns = [
     path('recibos/', recibos.as_view(), name="recibos"),
     path('selecionarUmRecigo/', selecionarUmRecigo, name="selecionarUmRecigo"),
     path('pagarFatura/', pagarFatura, name="pagarFatura"),
-    path('selecionarPagsDever/', selecionarPagsDever, name="selecionarPagsDever"),    
+    path('selecionarPagsDever/', selecionarPagsDever, name="selecionarPagsDever"),  
+    path('faturasPorIdGroup/', pagPorIdGroup, name="faturasPorIdGroup"),  
 ]

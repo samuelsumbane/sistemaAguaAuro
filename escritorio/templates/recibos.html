@@ -56,6 +56,7 @@
               }
             });
 
+            function printContent(el){var printData = document.getElementById(el);newWin = window.open("");newWin.document.write(printData.outerHTML);newWin.print();newWin.close();}
 
            $('#openModal').click(()=>{
             // $('#start').click(()=>{
@@ -125,6 +126,19 @@
                 $('#pagCode').val(parseInt(id_cliente))
                 codigo = clientSelectValue.split(' - ')[2]
 
+                var now = new Date()
+                var hora = ("0" + now.getHours()).slice(-2)
+                var minutos = ("0" + now.getMinutes()).slice(-2)
+                var segundos = ("0" + now.getSeconds()).slice(-2)
+                var hourmin = `${hora}:${minutos}` 
+
+                var dia = ("0" + now.getDate()).slice(-2);
+                var monthcurrent = now.getMonth() + 1
+                var mes = ("0" + monthcurrent).slice(-2);
+                var anocompleto = now.getFullYear();
+
+                var groupid = `${anocompleto}${mes}${dia}${hora}${minutos}${segundos}`
+
                 $.ajax({
                     url: "{% url 'selecionarPagsDever'  %}",
                     type: 'GET',
@@ -140,10 +154,19 @@
                         }else{
                             nrData = pagData.length
                             dividatotal = 0
+                            $("#idgroupinput").val(groupid)
+
                             for(let pg = 0;pg < nrData;pg++){
                                 let mindata = pagData[pg]
                                 if(pagData[pg]['pag_totalpago'] < pagData[pg]['valordafatura'] || pagData[pg]['pag_divida'] > 0){
-                                    let valoremfalta = parseFloat(mindata['valordafatura']) - parseFloat(mindata['pag_totalpago'])
+              
+                                    let valoremfalta
+                                    if(mindata['pag_totalpago'] != ''){
+                                        valoremfalta = parseFloat(mindata['valordafatura']) - parseFloat(mindata['pag_totalpago'])
+                                    }else{
+                                        valoremfalta = parseFloat(mindata['valordafatura']) - 0
+                                    }   
+
                                     $('#minRecibosDiv').append(`
 
                                         <input type="hidden" name="divsLen" id="divsLen" value="${nrData}">
@@ -212,9 +235,7 @@
                                  document.querySelector('#minRecibosDiv').innerHTML = ""  
                             }else{
                                 console.log(response['data'])
-                            }
-
-                     
+                            } 
                         }, error: function(response){
                             console.log('Erro: ', response)
                         }
@@ -227,7 +248,47 @@
 
             $("#tabela").on('click', ".printButton", function(){
                 let idgroup = $(this).attr('id')
-                alert(idgroup)
+                if (idgroup == '' || idgroup == 'null'){
+                    idgroupnotfound()
+                }else{
+                    $.ajax({
+                        type: 'GET',
+                        url: '{% url "faturasPorIdGroup"  %}',
+                        data: {idgroup: idgroup},
+                        dataType:"json",
+                        success: function (response){
+
+                            let pagdata = response['data']
+                            let lenpagdata = pagdata.length
+                            document.querySelector('#fatResults').innerHTML = ''
+                            let clientdivida = 0
+                            pagdata.map(function(pagdata){    
+                                $('#fatResults').append(`
+                                    <div style="width:90%;display:flex;justify-content:space-between;align-items:center;margin:auto;margin-top:20px;height:30px;border-radius:4px;background:lightgray" >
+                                        <p>${pagdata['pag_ano']}</p>
+                                        <p>${pagdata['pag_mes']}</p>
+                                        <p>${pagdata['valordafatura']}</p>
+                                        <p>${pagdata['pag_totalpago']}</p>
+                                        <p>${pagdata['pag_divida']}</p>
+                                    </div>
+                                `)
+                                clientdivida += parseFloat(pagdata['pag_divida']).toFixed(2) 
+                            })
+                            document.querySelector('#dividavalue').textContent = clientdivida
+
+                            console.log(response['dataCliente'])
+                            document.querySelector('#docnomecliente').textContent = response['dataCliente'][0]['nome_cliente'] 
+                            document.querySelector('#docbairro').textContent = response['dataCliente'][0]['endereco_cliente'] 
+
+                            document.querySelector('#reciboDoc').style.display = 'block'
+                            printContent('reciboDoc')
+                            document.querySelector('#reciboDoc').style.display = 'none'
+                                    
+                        }, error: function(response){
+                            console.log('Erro: ', response)
+                        }
+                    })
+                }
             })    
                
             $("#tabela").on('click', ".updateButton", function(){
@@ -275,6 +336,8 @@
 
                         <input type="hidden" name="userid" id="userid" value="{{ user.id }}">
 
+                        <input type="hidden" name="idgroupinput" id="idgroupinput">
+
                         <!-- fats a pagar -->
                         <div id="minRecibosDiv"></div>
 
@@ -304,7 +367,7 @@
 
         <div class='fatura-page-footer'></div>
         
-        <div id="reciboDoc" style="width:600px;display: flex;flex-direction:column;background:white;border:2px solid ">
+        <div id="reciboDoc" style="width:600px;display: flex;flex-direction:column;background:white;border:2px solid;display: none; ">
             <div id="reciboHeader">
                 <div id="headerPic" style="width:60%;margin:auto;"><img src="../../static/imgs/fatlogo.jpg" width="100%" height="170px" alt="logo da recibo"></div>
             </div>
@@ -319,20 +382,27 @@
                         <p style="padding-left:20px">Bairro: &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp </p>
                         <p id="docbairro"></p>
                     </div>
-                </div>
+                </div><br />
 
                 <div>
                     <h2 style="text-align: center;">Faturas pagas</h2>
-                    <div style="width:90%;min-height:30px;height:auto;margin:auto;;background:red;" id="divfaturaspagas">
-                    
-                        <!-- # -->
+                    <br />
+                    <div style="width:95%;min-height:30px;height:auto;margin:auto;" id="divfaturaspagas">
+                        <div style="display:flex;justify-content:space-around">
+                            <strong>Ano</strong>
+                            <strong>Mês</strong>
+                            <strong>V. Fatura</strong>
+                            <strong>V. Pago</strong>
+                            <strong>Divida</strong>
+                        </div>
+                        <div id="fatResults"></div>
+                        
                     </div>    
                     <br>
                     <div style="padding-left:40px">
                         <strong>Divida:</strong>
-                        <strong id="divida">32</strong>
+                        <strong id="dividavalue"></strong>
                         <strong>MT</strong>
-
                     </div>                
                 </div>
 

@@ -114,3 +114,11 @@ function atividadeNaoEncontrada(){
         text: `Não houve atividade nas datas seleciondas`
     })    
 }
+
+function idgroupnotfound(){
+    swal({
+        icon: "warning",
+        title: 'Fatura ainda não foi paga',
+        text: `Só pode imprimir fatura que se começou com o pagamento`
+    })
+}    

@@ -278,12 +278,13 @@ def retornaridgroup():
     return idgroup
 
 def pagarFatura(request):
+         
     if request.method == "POST":
-        # pagCode = request.POST.get('pagCode')
         divlen = request.POST.get('divsLen')
         userid = request.POST.get('userid')
-        
-        
+        idgroup = request.POST.get('idgroupinput')
+
+               
         for i in range(int(divlen)):
             valordafatura = request.POST.get(f"valorapagar{i}")
             divida = request.POST.get(f'dividaapagar{i}')
@@ -297,22 +298,25 @@ def pagarFatura(request):
                 if float(pagamento.valordafatura) < float(valordafatura) or float(pagamento.pag_divida) < float(divida):
                     data = "203"
                 else:
-                    pagamento.pag_totalpago += float(valordafatura)
+                    if pagamento.pag_totalpago != "":
+                        pagamento.pag_totalpago += float(valordafatura)
+                    else:
+                        pagamento.pag_totalpago = float(valordafatura)
+                           
                     pagamento.pag_divida -= float(divida)
-                    pagamento.pag_idgroup = dataEHoraAtual.strftime('%d%m%H%M%S')
+                    pagamento.pag_idgroup = idgroup
                     pagamento.save()
                     saveAtivity("F. Paga", valordafatura, userid, 'infinity', id)
-                    
                     data = "200"
                          
-           
         return JsonResponse({'data': data})
-                
+                     
         
 def pagPorIdGroup(request):
     idgroup = request.GET['idgroup']
-    pags = Pagamento.filter(pag_idgroup=idgroup).values()
+    pags = Pagamento.objects.filter(pag_idgroup=idgroup).values()
     data = list(pags)
-    return JsonResponse({'data':data})
+    dataCliente = list(Cliente.objects.filter(id_cliente=pags[0]['pag_code_id']).values())
+    return JsonResponse({'data':data, 'dataCliente':dataCliente})
 
 
