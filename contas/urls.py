@@ -12,4 +12,5 @@ urlpatterns = [
     path('userpage/', userpage, name="userpage"),
     path('deluser/', deluser, name="deluser"),
     path('modifyUser/', modifyUser, name="modifyUser"),
+    path('changePassword/', changePassword, name="changePassword"),
 ]

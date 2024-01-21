@@ -17,6 +17,35 @@
     <script src="{% static 'js/jquery-3.3.1.js' %}"></script>
 </head>
 
+<script>
+    $('document').ready(function() {
+        $('#alterarSenha').click(()=>{
+            document.querySelector('.min-modal').classList.add("showModal")
+        })
+
+        $('#loggedUserForm').submit(function(e){
+            e.preventDefault()
+            $.ajax({
+                type: 'POST',
+                url: '{% url "changePassword"  %}',
+                data: $(this).serialize(),
+                dataType:"json",
+                success: function (response){
+                    console.log(response['data'])
+                    if(response['data'] == '200'){
+                        userCadastradoComSucesso('atualizado',  response['senha'])
+                    }else{
+                        document.querySelector('#senhaatualError').textContent = "Esta senha não corresponde a senha atual "
+                    }
+                }, error: function(response){
+                    console.log('Erro: ', response)
+                }
+            })
+        })
+    })    
+    
+</script>
+
 <body>
 
     <div class="simple-page">
@@ -59,10 +88,43 @@
 
                     <div>
                         <p style="padding-top:6px">Senha:</p>
-                        <button type="button" class="btn" >Alterar a senha</button>
+                        <button type="button" class="btn" id="alterarSenha">Alterar a senha</button>
                     </div>                
 
             </div>
+            <div class="min-modal" id="minModal">
+                <div class="min-modal-header">
+                  <h2 class="min-modal-title">Adicionar cliente</h2>
+                </div>
+  
+                <div class="min-modal-body">
+                  <form method="post" class="modalForm" id="loggedUserForm">
+                      {% csrf_token %}
+                    <input type="hidden" name="userid" id="userid" value="{{ user.id }}">
+                    <div>
+                      <label>Senha atual</label>
+                      <input type="text" class="formTextInput" placeholder="Senha usada para se logar" name="senhaatual" id="senhaatual" />
+                      <span class="errorText" id="senhaatualError"></span>
+
+                    </div>
+
+                    <div>
+                        <label>Nova senha</label>
+                        <input type="text" class="formTextInput" placeholder="Nova senha" name="novasenha" id="novasenha" />
+                    </div>
+  
+                    <div>
+                        <label>Confirmar</label>
+                        <input type="text" class="formTextInput" placeholder="Confirmar nova senha" name="" id="nome" />
+                      </div>
+  
+                    <div class="min-submit-buttons">
+                        <button class="fecharButton" type="button" >Fechar</button>
+                        <button class="submitButton" type="submit">Submeter</button>
+                    </div>
+                  </form>
+                </div>
+  
             
         </div>
 
@@ -82,5 +144,7 @@
           
     </script>
     
+    <script src="{% static 'js/alerts.js' %}"></script>
+
 </body>
 </html>

@@ -8,6 +8,8 @@
 
 {% block conteudo %}
     <script>
+    
+        document.querySelector('.sidebar-btn-clientes').classList.toggle('active-btn');
 
          $(document).ready(function (){
 
@@ -26,8 +28,8 @@
                         title: 'Ação',
                         render: function(data, type, row) {
                             return `<button type="button" class="updateButton" id="${row.id_cliente}"></button>`;
+                        }
                     }
-                }
 
                 ],
                 "oLanguage": {
@@ -177,7 +179,7 @@
                       <input type="number" placeholder="Código do cliente"  class="formTextInput" name="codigo" id="codigo"/>
                       <span class="errorText" id="codeError"></span>
                     </div>
-                    <button type='button' class="addButton" id="fillCodeButton"></button>
+                    <button type='button' class="fillButton" id="fillCodeButton"></button>
                   </div>
                   <input type="hidden" name="userid" id="userid" value="{{ user.id }}">
                   <div>

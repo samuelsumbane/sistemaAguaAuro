@@ -6,8 +6,10 @@
 <script>
   $('document').ready(function(){
     $('#userprofile').click(()=>{
-      window.location.href = "userpage"
+      window.location.href = "../userpage"
     })
+
+    document.querySelector('.sidebar-btn-home').classList.toggle('active-btn');
 
     $.ajax({
         type: 'GET',
@@ -22,7 +24,6 @@
             document.querySelector('#clientactive').textContent = (response['clientLenActive'])
             document.querySelector('#clientdesactived').textContent = (response['clientLen'] - response['clientLenActive'])
 
-            clientLenActive
           }, error: function(response){
             console.log('Erro: ', response)
         }
@@ -122,7 +123,7 @@
                                 barThickness: 18,
                                 maxBarThickness: 100,
                                 minBarLength: 14,
-                                label: "Lucro Mensal",
+                                label: "Faturas",
                                 type: "bar",
                                 backgroundColor:'rgb(0, 57, 82)',
                                 data: ['32', '54',  '93'],

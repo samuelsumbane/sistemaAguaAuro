@@ -1,14 +1,9 @@
 {% extends 'base.html' %}
 
-{% block adicionalButton %}
-<!--        <button id="addClient">Ad. Cliente</button>-->
-{% endblock %}
-
-
-
 
 {% block conteudo %}
     <script>
+        document.querySelector('.sidebar-btn-gerencia').classList.toggle('active-btn');
 
          $(document).ready(function (){
 
@@ -28,11 +23,12 @@
                     { data: 'pag_idgroup', visible: false},
                     {
                         data: null,
-                        title: 'Ações',
+                        title: 'Ação',
                         render: function(data, type, row) {
-                            return `<button type="button" class="updateButton" id="${row.pag_id}" title="Ëditar fatura"></button>
+                            return `
                             <button type="button" class="printButton" id="${row.pag_idgroup}" title="Imprimir fatura"></button>
-                            `;
+                        `;
+                        // <button type="button" class="updateButton" id="${row.pag_id}" title="Ëditar fatura"></button>
                     }
                 }
 
@@ -243,8 +239,6 @@
                 }    
             });
 
-            // divfaturaspagas
-            //             <p style="padding:5px 0 0 20px">dfasd</p>
 
             $("#tabela").on('click', ".printButton", function(){
                 let idgroup = $(this).attr('id')
@@ -291,10 +285,28 @@
                 }
             })    
                
-            $("#tabela").on('click', ".updateButton", function(){
-                let pagid = $(this).attr('id')
-                alert(pagid)
-            })
+            //  POR ENQUANTO ESSA FUNCTIONALIDADE VAI FICAR DE FORA 
+            
+            // $("#tabela").on('click', ".updateButton", function(){
+            //     let pagid = $(this).attr('id')
+            //     $.ajax({
+            //         type: 'GET',
+            //         url: '{% url "pagPorId"  %}',
+            //         data: {id: pagid},
+            //         dataType:"json",
+            //         success: function (response){
+            //             let pagdata = response['data']
+            //             let pagdatalen = pagdata.length
+            //             if(pagdata[0]['pag_totalpago'] > 0){
+            //                 console.log('por motivos de seguranca esse recibo nao pode ser editada ')
+            //             }else{
+            //                 // document.querySelector('.ma-modal').classList.add("showModal")  
+            //             } 
+            //         }, error: function(response){
+            //             console.log('Erro: ', response)
+            //         }
+            //     })
+            // })
         })
 
     </script>

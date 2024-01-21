@@ -320,3 +320,9 @@ def pagPorIdGroup(request):
     return JsonResponse({'data':data, 'dataCliente':dataCliente})
 
 
+def pagPorId(request):
+    id = request.GET['id']
+    pags = Pagamento.objects.filter(pag_id=id).values()
+    return JsonResponse({'data':list(pags)})
+
+

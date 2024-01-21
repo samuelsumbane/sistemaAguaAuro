@@ -1,7 +1,7 @@
 <!--<!DOCTYPE html>-->
 {% load static %}
 
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <title></title>
@@ -25,14 +25,13 @@
 
 <body>
 
-
  <div class='sidebar-container'>
         <div class="sidebar sidebar-item">
             <div class="sidebar-header-div">
                 <div id="div-hamburger sidebar-item">
                     <!-- <div class="hamburger sidebar-item" onClick={toggleSideBarItems}>
                         <span class="bar sidebar-item"></span>
-                        <span class="bar sidebar-item"></span>
+                         <span class="bar sidebar-item"></span>
                         <span class="bar sidebar-item"></span>
                     </div> -->
                 </div>
@@ -40,7 +39,7 @@
 
             <div class="sidebar-main-div">
 
-                <a href="{% url 'home' %}" class="sidebar-btn sidebar-btn-home">Home</a>
+                <a href="{% url 'home' %}" class="sidebar-btn sidebar-btn-home tooltip"><span class="tooltiptext">Dashboard</span></a>
 
                 <a href="{% url 'clientes' %}" class="sidebar-btn sidebar-btn-clientes tooltip"><span class="tooltiptext">Clientes</span></a>
                 
@@ -79,8 +78,6 @@
   <script src="{% static 'js/sweetalert.min.js' %}"></script>
   <script src="{% static 'js/select2.min.js' %}"></script>
   <script src="{% static 'js/alerts.js' %}"></script>
-
-
 
 </body>
 </html>

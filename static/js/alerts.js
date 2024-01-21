@@ -92,11 +92,11 @@ function criadoComSucesso(objecto, genero='o'){
     })    
 }
 
-function userCadastradoComSucesso(senha){
+function userCadastradoComSucesso(acao='adicionado',  senha){
     swal({
         icon: "success",
-        title: 'Usuário adicionado com sucesso!',
-        text: `A senha inicial é ${senha}`
+        title: `Usuário ${acao} com sucesso!`,
+        text: `A senha é ${senha}`
     })    
 }
 

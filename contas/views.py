@@ -9,9 +9,13 @@ User = get_user_model()
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout
+from app_agua.views import saveAtivity
 
 from contas.forms import ContasCadastrarForm
 from random import randint
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash
+# from django.contrib.auth.forms import PasswordChangeForm
 
 
 
@@ -37,6 +41,8 @@ def signin(request):
         
         if user is not None and user.is_active:
             auth_login(request, user)
+            saveAtivity("Login", '-', user.id, 'loginlogout')
+            
             return redirect('/') 
         else:
             return HttpResponse('Invalid credentials.')
@@ -45,6 +51,8 @@ def signin(request):
                     
 def signout(request):
     logout(request)
+    # saveAtivity("Logout", , userid, 'infinity')
+    
     return redirect('/')
 
 
@@ -59,21 +67,31 @@ def signup(request):
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
         username = request.POST['username']
-        # password = request.POST['password']
+        nivel = request.POST['user_nivel']
+
+        if nivel == 'user':
+            staff = True
+            superuser = False
+        elif nivel == 'admin':   
+            staff = True
+            superuser = True
+        
         newuser = User.objects.create_user(
             first_name=first_name,
             last_name=last_name,
             username=username,
+            is_staff=staff,
+            is_superuser=superuser,
             password=senha
         )
         try:
             newuser.save()
             data = '200'
             return JsonResponse({'data':data, 'password':senha})    
-            
         except:
             return HttpResponse('Something went wrong')
-        
+        return JsonResponse({'nivel':nivel})
+
         
 def deluser(request):
     if request.method == 'GET':
@@ -128,5 +146,22 @@ def login(request):
 def userpage(request):
     return render(request, "userpage.html")
         
+        
+        
+@login_required        
+def changePassword(request):
+    if request.method == "POST":
+        senhaatual = request.POST['senhaatual']
+        novasenha = request.POST['novasenha']
+        # Verificar a senha atual (substitua 'user' pelo objeto de usuário apropriado)
+        if request.user.check_password(senhaatual):
+            # Atualizar a senha
+            request.user.set_password(novasenha)
+            request.user.save()
+
+            return JsonResponse({'data': '200', 'senha':novasenha})  
+        else:
+            return JsonResponse({'data': '500'}) 
+
     
     

@@ -102,192 +102,192 @@ body{
             overflow-y: auto;
         }
 
-
-        .min-modal, .medium-modal, .max-modal{
-            position:absolute;
-            width:25%;
-            min-width:300px;
-            height:99%;
-            background:rgba(1, 22, 32, 0.2);
-            -moz-backdrop-filter: blur(34px);
-            backdrop-filter: blur(3px);
-            resize: both !important;
-//             -moz-backdrop-filter: blur(14px);
-            right:-70%;
-            top:0;
-            @include flex-c;
-            transition: 0.8s;
-
-            &-header{
-                height: 10%;
-                padding:5%
-            }
-
-            &-body, &-body-left{
-                height: 85%;
-                @include flex-c;
-                overflow-y: auto;
-
-                .modalform{
-                    width:90%;
-                    margin:auto;
-
-                    .div-and-btn{
-                        display: flex;
-                        flex-direction:row;
-
-                        & div{
-                            width:85%;
-                            @include flex-c;
-                        }
-
-                        & button{ margin: auto 0 0 auto;}
-                    }
-
-
-                    & > div, .min-submit-buttons{
-                        @include flex-c;
-                        height: auto;
-                        // margin-top:30px;
-                        margin-top:20px;
-
-
-                        .inputTipoLabel, .inputTipoLabelBig{
-                            width:49% !important;
-                            border:none !important;
-                            background:transparent;
-                            font-weight: bold;
-                            text-align: right;
-                            outline: none !important;
-                            margin-left:auto !important;
-                        }
-                        .inputTipoLabelBig{
-                            width:auto !important;
-                            text-align: center;
-                        }
-
-                        & > select{
-                            width:100%;
-                        }
-                    }
-                    
-                    
-                    
-                    .nivelRadios{
-                        display: flex !important;
-                        flex-direction: row;
-                        justify-content: space-around
-                    }
-
-                    .codeAndName, .codeAndNameMany{
-                        width:auto;
-                        height: auto;
-                        background:rgba(1, 22, 32, 0.055);
-                        border:1px solid $bg-primary;
-                        border-radius: $input-radius;
-                        
-                        & > div, & > label{
-                            padding-left:5px;
-                        }
-                    }
-                    .codeAndNameMany{
-                        & > div{
-                            background: transparent !important;
-                            display: flex !important;
-                            flex-direction: column !important;
-                            margin:3%
-                        }
-                    }
-                }
-            }
-
-            &-footer{
-                height:5%;
-            }
-        }
-
-        .max-modal{
-            width:75%;
-            min-width:500px;
-            right:-90%;
-            // right:0 !important;
-            
-            .max-modal-title{
-                text-transform:uppercase;
-                font-family:'Lucida sans';
-            }
-
-            &-body{
-                display:flex;
-                flex-direction:row;
-                & > div{
-                    height:100%;
-                }
-
-                &-left{
-                    width:35%;
-                }
-                &-right{
-                    width:62%;
-                    background:rgba(255,255,255, .8);
-                    border-radius: $input-radius;
-                }
-            }
-        }
-
-        
-        .medium-modal{
-            width:50%;
-            min-width:400px;
-            right:-90%;
-            // right:0 !important;
-
-            .medium-modal-title{
-                text-transform:uppercase;
-                font-family:'Lucida sans';
-            }
-
-            &-body{
-                display:flex;
-                flex-direction:row;
-                overflow-y:auto;
-                & > div{
-                    height:100%;
-                }
-
-                .reciboInputModal{
-                    width:60% !important;
-                    margin:auto;
-                }    
-
-                #minRecibosDiv{
-                    min-height:40px;
-                    display: flex;
-                    flex-direction: row;
-                    flex-wrap: wrap;
-                    justify-content: space-around;
-                    column-gap:10px !important;
-                }
-
-            }
-        }
-
-        .showModal{
-          right:0;
-        }
-
-
-        .close-min-modal{
-            // left:calc(100% - 25%);
-            right:0; //nao sei por enquanto
-        }
-
     }
 
     // &-footer{
     //     @include h(3%);
     //     background:transparent;
     // }
+}
+
+//
+.min-modal, .medium-modal, .max-modal{
+    position:absolute;
+    width:25%;
+    min-width:300px;
+    height:100%;
+    background:rgba(1, 22, 32, 0.2);
+    -moz-backdrop-filter: blur(34px);
+    backdrop-filter: blur(3px);
+    resize: both !important;
+//             -moz-backdrop-filter: blur(14px);
+    right:-70%;
+    top:0;
+    @include flex-c;
+    transition: 0.8s;
+
+    &-header{
+        height: 10%;
+        padding:5%
+    }
+
+    &-body, &-body-left{
+        height: 85%;
+        @include flex-c;
+        overflow-y: auto;
+
+        .modalform{
+            width:90%;
+            margin:auto;
+
+            .div-and-btn{
+                display: flex;
+                flex-direction:row;
+
+                & div{
+                    width:85%;
+                    @include flex-c;
+                }
+
+                & button{ margin: auto 0 0 auto;}
+            }
+
+
+            & > div, .min-submit-buttons{
+                @include flex-c;
+                height: auto;
+                // margin-top:30px;
+                margin-top:20px;
+
+
+                .inputTipoLabel, .inputTipoLabelBig{
+                    width:49% !important;
+                    border:none !important;
+                    background:transparent;
+                    font-weight: bold;
+                    text-align: right;
+                    outline: none !important;
+                    margin-left:auto !important;
+                }
+                .inputTipoLabelBig{
+                    width:auto !important;
+                    text-align: center;
+                }
+
+                & > select{
+                    width:100%;
+                }
+            }
+            
+            
+            
+            .nivelRadios{
+                display: flex !important;
+                flex-direction: row;
+                justify-content: space-around
+            }
+
+            .codeAndName, .codeAndNameMany{
+                width:auto;
+                height: auto;
+                background:rgba(1, 22, 32, 0.055);
+                border:1px solid $bg-primary;
+                border-radius: $input-radius;
+                
+                & > div, & > label{
+                    padding-left:5px;
+                }
+            }
+            .codeAndNameMany{
+                & > div{
+                    background: transparent !important;
+                    display: flex !important;
+                    flex-direction: column !important;
+                    margin:3%
+                }
+            }
+        }
+    }
+
+    &-footer{
+        height:5%;
+    }
+}
+
+.max-modal{
+    width:75%;
+    min-width:500px;
+    right:-90%;
+    // right:0 !important;
+    
+    .max-modal-title{
+        text-transform:uppercase;
+        font-family:'Lucida sans';
+    }
+
+    &-body{
+        display:flex;
+        flex-direction:row;
+        & > div{
+            height:100%;
+        }
+
+        &-left{
+            width:35%;
+        }
+        &-right{
+            width:62%;
+            background:rgba(255,255,255, .8);
+            border-radius: $input-radius;
+        }
+    }
+}
+
+
+.medium-modal{
+    width:50%;
+    min-width:400px;
+    right:-90%;
+    // right:0 !important;
+
+    .medium-modal-title{
+        text-transform:uppercase;
+        font-family:'Lucida sans';
+    }
+
+    &-body{
+        display:flex;
+        flex-direction:row;
+        overflow-y:auto;
+        & > div{
+            height:100%;
+        }
+
+        .reciboInputModal{
+            width:60% !important;
+            margin:auto;
+        }    
+
+        #minRecibosDiv{
+            min-height:40px;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            column-gap:10px !important;
+        }
+
+    }
+}
+
+   
+.showModal{
+    right:0;
+}
+
+.close-min-modal{
+    // left:calc(100% - 25%);
+    right:0; //nao sei por enquanto
 }
 
 

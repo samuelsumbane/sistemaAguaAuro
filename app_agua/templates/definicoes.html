@@ -2,9 +2,10 @@
 
 
 {% block conteudo %}
-
     <script>
-       $(document).ready(function (){
+
+        document.querySelector('.sidebar-btn-definicoes').classList.toggle('active-btn');
+        $(document).ready(function (){
 
             $.ajax({
                 type: 'GET',
@@ -27,7 +28,6 @@
                     console.log('Erro: ', response)
                 }
             })
-
 
 
             $('#multar').change(()=>{

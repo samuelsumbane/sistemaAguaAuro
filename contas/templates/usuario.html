@@ -3,7 +3,7 @@
 
 {% block conteudo %}
     <script>
-
+        document.querySelector('.sidebar-btn-usuarios').classList.toggle('active-btn');
       $(document).ready(function(){
         $('#addBtn').click(()=>{
           document.querySelector('.min-modal').classList.add('showModal')
@@ -15,23 +15,27 @@
 
         $('#userForm').submit(function(e){
           e.preventDefault();
-          $.ajax({
-              type: 'POST',
-              url: '{% url "signup"  %}',
-              data: $(this).serialize(),
-              dataType:"json",
-              success: function (response){
-                console.log(response['data'])
 
-                if(response['data'] == '200'){
-                  $('#userForm')[0].reset()
-                  userCadastradoComSucesso(response['password'])
+          if($('#first_name').val() == '' || $('#last_name').val() =='' || $('#username').val() == '') {
+            camposNaoPreenchidos()
+          } else {
+            $.ajax({
+                type: 'POST',
+                url: '{% url "signup"  %}',
+                data: $(this).serialize(),
+                dataType:"json",
+                success: function (response){
+
+                  if(response['data'] == '200'){
+                    $('#userForm')[0].reset()
+                    userCadastradoComSucesso('adicionado', response['password'])
+                  }
+                  // login, 64642; samuel 52ab2 
+                }, error: function(response){
+                  console.log('Erro: ', response)
                 }
-                // login, 64642
-              }, error: function(response){
-                console.log('Erro: ', response)
-              }
-          })   
+            })
+          }   
         })
 
         for(const a of document.querySelectorAll('.deleteButton')){
@@ -196,7 +200,7 @@
       
                     <div class='nivelRadios' style="display:flex;flex-Direction:column">
                       <label >Cargo</label> 
-                      <select name="user_nivel" class="formTextInput" id="user_nivel" >
+                      <select name="user_nivel" class="formTextInput" name="user_nivel" id="user_nivel" >
                         <option value="user">Usuário</option>
                         <option value="admin">Administrador</option>
                       </select>

@@ -12,4 +12,5 @@ urlpatterns = [
     path('pagarFatura/', pagarFatura, name="pagarFatura"),
     path('selecionarPagsDever/', selecionarPagsDever, name="selecionarPagsDever"),  
     path('faturasPorIdGroup/', pagPorIdGroup, name="faturasPorIdGroup"),  
+    path('pagPorId/', pagPorId, name="pagPorId"),
 ]
