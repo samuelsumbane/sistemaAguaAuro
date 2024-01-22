@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
 
-{% block adicionalButton %}
-<!--        <button id="addClient">Ad. Cliente</button>-->
-{% endblock %}
-
-
 
 
 {% block conteudo %}
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles/css/print.css' %}">
+
     <script>
         document.querySelector('.sidebar-btn-gerencia').classList.toggle('active-btn');
 
@@ -277,6 +276,8 @@
              });
         })
     </script>
+
+
 
  <div class="fatura-page">
 

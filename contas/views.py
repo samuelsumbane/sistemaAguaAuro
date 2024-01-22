@@ -42,17 +42,17 @@ def signin(request):
         if user is not None and user.is_active:
             auth_login(request, user)
             saveAtivity("Login", '-', user.id, 'loginlogout')
-            
             return redirect('/') 
         else:
-            return HttpResponse('Invalid credentials.')
+            error_message = "Credenciais inválidas"
+            return render(request, 'registration/login.html', {'error_message': error_message})
 
+    return render(request, 'registration/login.html')
       
                     
 def signout(request):
     logout(request)
     # saveAtivity("Logout", , userid, 'infinity')
-    
     return redirect('/')
 
 
@@ -89,8 +89,7 @@ def signup(request):
             data = '200'
             return JsonResponse({'data':data, 'password':senha})    
         except:
-            return HttpResponse('Something went wrong')
-        return JsonResponse({'nivel':nivel})
+            return JsonResponse({'nivel':nivel})
 
         
 def deluser(request):
@@ -132,8 +131,6 @@ def modifyUser(request):
         return JsonResponse({'data':data})
         
         
-
-
 def usuario(request):
     usuarios = User.objects.all()
     return render(request, "usuario.html", {"usuarios": usuarios})
@@ -153,15 +150,12 @@ def changePassword(request):
     if request.method == "POST":
         senhaatual = request.POST['senhaatual']
         novasenha = request.POST['novasenha']
-        # Verificar a senha atual (substitua 'user' pelo objeto de usuário apropriado)
         if request.user.check_password(senhaatual):
-            # Atualizar a senha
             request.user.set_password(novasenha)
             request.user.save()
-
+            logout(request)
             return JsonResponse({'data': '200', 'senha':novasenha})  
         else:
             return JsonResponse({'data': '500'}) 
 
-    
     

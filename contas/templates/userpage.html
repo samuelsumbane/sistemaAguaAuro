@@ -1,7 +1,6 @@
 {% load static %}
 
 
-
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -25,22 +24,30 @@
 
         $('#loggedUserForm').submit(function(e){
             e.preventDefault()
-            $.ajax({
-                type: 'POST',
-                url: '{% url "changePassword"  %}',
-                data: $(this).serialize(),
-                dataType:"json",
-                success: function (response){
-                    console.log(response['data'])
-                    if(response['data'] == '200'){
-                        userCadastradoComSucesso('atualizado',  response['senha'])
-                    }else{
-                        document.querySelector('#senhaatualError').textContent = "Esta senha não corresponde a senha atual "
+
+            if($('#confirmar').val() != $('#novasenha').val()){
+                document.querySelector('#confirmarError').textContent = "As senhas não correspondem"
+            }else{
+                document.querySelector('#confirmarError').textContent = ""
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "changePassword"  %}',
+                    data: $(this).serialize(),
+                    dataType:"json",
+                    success: function (response){
+                        console.log(response['data'])
+                        if(response['data'] == '200'){
+                            userCadastradoComSucesso('atualizado',  response['senha'])
+                        }else{
+                            document.querySelector('#senhaatualError').textContent = "Esta senha não corresponde a senha atual "
+                        }
+                    }, error: function(response){
+                        console.log('Erro: ', response)
                     }
-                }, error: function(response){
-                    console.log('Erro: ', response)
-                }
-            })
+                }) 
+            }
+
         })
     })    
     
@@ -115,12 +122,13 @@
   
                     <div>
                         <label>Confirmar</label>
-                        <input type="text" class="formTextInput" placeholder="Confirmar nova senha" name="" id="nome" />
+                        <input type="text" class="formTextInput" placeholder="Confirmar nova senha" name="confirmar" id="confirmar" />
+                        <span class="errorText" id="confirmarError"></span>
                       </div>
   
                     <div class="min-submit-buttons">
                         <button class="fecharButton" type="button" >Fechar</button>
-                        <button class="submitButton" type="submit">Submeter</button>
+                        <button class="submitButton" type="submit">Mudar</button>
                     </div>
                   </form>
                 </div>

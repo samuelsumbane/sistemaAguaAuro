@@ -1,0 +1,20 @@
+/* print.css */
+/* 
+body{
+    background-color: rgb(55, 20, 20) !important;
+} */
+
+@media print {
+    body {
+       font-size: 12pt;
+       line-height: 1.5;
+    }
+ 
+    #faturaDoc{
+       background-color:red !important;
+       line-height: 10.5 !important;
+    }
+ 
+    /* Outros estilos de impressão podem ser adicionados conforme necessário */
+ }
+ 

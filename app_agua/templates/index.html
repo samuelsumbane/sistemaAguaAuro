@@ -3,8 +3,29 @@
 
 {% block conteudo %}
 
+{% load static %}
+
+<script src="{% static 'js/functions.js' %}"></script>
+
+
 <script>
+
+
   $('document').ready(function(){
+
+    let tempo = returnTime();
+    let data = returnDate();
+
+    (function updatetime() {
+      document.querySelector('#time').textContent = returnTime();
+      setTimeout(updatetime, 1000)
+    })();  
+
+    (function updateDate() {
+      document.querySelector('#date').textContent = returnDate();
+      setTimeout(updateDate, 1000)
+    })();
+
     $('#userprofile').click(()=>{
       window.location.href = "../userpage"
     })
@@ -14,7 +35,6 @@
     $.ajax({
         type: 'GET',
         url: '{% url "numeroTotal"  %}',
-        // data: {model:"Cliente"},
         dataType:"json",
         success: function (response){
             document.querySelector('#clientlen').textContent = response['clientLen']
@@ -28,8 +48,10 @@
             console.log('Erro: ', response)
         }
     })
-
+    
   })
+
+
 </script>
 
 
@@ -151,15 +173,16 @@
               </div>
               
               <div class="home-center-second-date">
-                <h2>12:30</h2>
+                <h2 id="time"></h2>
                 <br />
-                <h3>14.01.2024</h3>
+                <h3 id="date"></h3>
               </div>
             </div>
           </div>
       
     </div>
-    
+
+
 </main>
 
 

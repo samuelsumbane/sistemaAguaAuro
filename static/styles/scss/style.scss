@@ -29,6 +29,22 @@ body{
     color:rgb(248, 98, 98);
 }
 
+
+:is(.user-page-body-table, .client-page-body-table, .fatura-page-body-table)::-webkit-scrollbar{
+    width:12px;
+    background:$scrollcolor;
+    border-radius:14px
+
+}
+
+
+:is(.user-page-body-table, .client-page-body-table, .fatura-page-body-table)::-webkit-scrollbar-thumb{
+    width:10px;
+    background:rgba($bg-primary, 0.4);
+    border-radius:14px
+}
+
+
 .home-page, .user-page, .client-page, .fatura-page{
     @include wh(100%, 100vh);
     background: radial-gradient(circle, rgb(203, 215, 226), white);
@@ -109,6 +125,7 @@ body{
     //     background:transparent;
     // }
 }
+
 
 //
 .min-modal, .medium-modal, .max-modal{
@@ -343,7 +360,7 @@ body{
                 padding-left: 5px;
 
                 &-item{
-                    color:$scrollcolor;
+                    color:$color-primary;
                     list-style: none;
                     cursor: pointer;
                 }
@@ -355,7 +372,7 @@ body{
                 .sub-item-div{
                     width: 95%;
                     margin-left:auto;
-                    color: rgb(224, 215, 203);
+                    color: rgb(133, 162, 168);
                     & ul li{
                        list-style: none;
                        cursor: pointer; 
