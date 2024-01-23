@@ -1,0 +1,37 @@
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Cor de fundo com opacidade */
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+        animation-timing-function: ease-in; /* Começa devagar */
+    }
+
+    25% {
+        transform: rotate(720deg);
+        animation-timing-function: linear; /* Mantém a velocidade durante 1 volta completa */
+    }
+
+    100% {
+        transform: rotate(1440deg); /* 4 voltas completas */
+        animation-timing-function: ease-out; /* Desacelera no final */
+    }
+}

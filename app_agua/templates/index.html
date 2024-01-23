@@ -8,52 +8,9 @@
 <script src="{% static 'js/functions.js' %}"></script>
 
 
-<script>
-
-
-  $('document').ready(function(){
-
-    let tempo = returnTime();
-    let data = returnDate();
-
-    (function updatetime() {
-      document.querySelector('#time').textContent = returnTime();
-      setTimeout(updatetime, 1000)
-    })();  
-
-    (function updateDate() {
-      document.querySelector('#date').textContent = returnDate();
-      setTimeout(updateDate, 1000)
-    })();
-
-    $('#userprofile').click(()=>{
-      window.location.href = "../userpage"
-    })
-
-    document.querySelector('.sidebar-btn-home').classList.toggle('active-btn');
-
-    $.ajax({
-        type: 'GET',
-        url: '{% url "numeroTotal"  %}',
-        dataType:"json",
-        success: function (response){
-            document.querySelector('#clientlen').textContent = response['clientLen']
-            document.querySelector('#userlen').textContent = response['userLen']
-            document.querySelector('#activeUser').textContent = response['userLenActive']
-            document.querySelector('#disativedUser').textContent = (response['userLen'] - response['userLenActive'])
-            document.querySelector('#clientactive').textContent = (response['clientLenActive'])
-            document.querySelector('#clientdesactived').textContent = (response['clientLen'] - response['clientLenActive'])
-
-          }, error: function(response){
-            console.log('Erro: ', response)
-        }
-    })
-    
-  })
-
-
-</script>
-
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+</div>
 
 <main>
     <div class="home-page">
@@ -184,6 +141,58 @@
 
 
 </main>
+
+
+<script>
+    document.getElementById('loadingOverlay').style.display = 'flex';
+
+
+  $('document').ready(function(){
+
+
+    let tempo = returnTime();
+    let data = returnDate();
+
+    (function updatetime() {
+      document.querySelector('#time').textContent = returnTime();
+      setTimeout(updatetime, 1000)
+    })();  
+
+    (function updateDate() {
+      document.querySelector('#date').textContent = returnDate();
+      setTimeout(updateDate, 1000)
+    })();
+
+    $('#userprofile').click(()=>{
+      window.location.href = "../userpage"
+    })
+
+    document.querySelector('.sidebar-btn-home').classList.toggle('active-btn');
+
+    $.ajax({
+        type: 'GET',
+        url: '{% url "numeroTotal"  %}',
+        dataType:"json",
+        success: function (response){
+          document.getElementById('loadingOverlay').style.display = 'none';
+
+          document.querySelector('#clientlen').textContent = response['clientLen']
+          document.querySelector('#userlen').textContent = response['userLen']
+          document.querySelector('#activeUser').textContent = response['userLenActive']
+          document.querySelector('#disativedUser').textContent = (response['userLen'] - response['userLenActive'])
+          document.querySelector('#clientactive').textContent = (response['clientLenActive'])
+          document.querySelector('#clientdesactived').textContent = (response['clientLen'] - response['clientLenActive'])
+
+
+          }, error: function(response){
+            console.log('Erro: ', response)
+        }
+    })
+
+
+  })
+
+</script>
 
 
 {% endblock %}

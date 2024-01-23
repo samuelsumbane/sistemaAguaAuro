@@ -65,8 +65,10 @@ body{
             display: flex;
             & > h2{
                 padding:20px;
-                font-family: 'Poppins', sans-serif;
-                color:black;
+                font-family:'sans-serif', Arial;
+                color:#333;
+                font-weight: bold;
+                text-transform: uppercase;
             }
             & > button{
                 margin:auto !important;
@@ -506,3 +508,24 @@ body{
     flex-direction: row !important;
     justify-content: space-around;
 }
+
+
+.swal-overlay{
+    background:rgba(1, 22, 32, 0.2);
+    -moz-backdrop-filter: blur(34px);
+    backdrop-filter: blur(3px);     
+}
+
+
+.swal-modal{
+    border-radius: $div-radius;
+    background-color:#fff
+}
+
+.swal-button{
+    background-color:#50a8ff !important;
+    outline:none !important;
+}
+
+
+
