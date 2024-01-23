@@ -182,7 +182,8 @@
                 let clientSelectValue = $("#clienteSelect").val()
                 let id_cliente = clientSelectValue.split(' - ')[2]
                 $('#fatCode').val(parseInt(id_cliente))
-                codigo = clientSelectValue.split(' - ')[2]
+                codigo = clientSelectValue.split(' - ')[0]
+                $('#clientCode').val(codigo)
 
                 var mesAnoPassado = thisOrLastYear()
                 let mesPassado = mesAnoPassado[0]
@@ -262,10 +263,23 @@
                             $('#valorFatura').attr('disabled', true)
                             $('#consumofaturado').attr('disabled', true)
                             $('#faturaForm')[0].reset()
+
+                            fatdata = response['fatdata'] 
+                           
+
                             if (response['data'] == "200"){
                                 criadoComSucesso('Fatura', 'a')
+                                
+                                $('#createdFats').append(`
+                                    <div style="width:90%;margin:20px 0 0 10px;display:flex;justify-content: space-between;">
+                                        <p>${fatdata['clientcode']} - ${fatdata['valordafatura']} - ${fatdata['fat_mes']} - ${fatdata['fat_ano']}<p>                                       
+                                        <input type="checkbox" id="">
+                                    <div>    
+                                `)
                             }else{
                                 faturaEditadaComSucesso()
+                                document.querySelector('.max-modal').classList.remove("showModal")
+
                             }
 
                         }, error: function(response){
@@ -303,10 +317,10 @@
 
               <div class="max-modal-body">
                   <!--  body-left -->
-                  <div class="max-modal-body-left">
+                    <div class="max-modal-body-left">
                       <form method="post" class="modalForm" id="faturaForm">
                         {% csrf_token %}
-                          <button type="button" class="btn" id="start">Start</button>
+                          <!-- <button type="button" class="btn" id="start">Start</button> -->
                         <div>
                             <label>Cliente</label>
                             <select id="clienteSelect">
@@ -315,6 +329,7 @@
                         </div>
 
                         <input type="hidden" name="fatCode" id="fatCode">
+                        <input type="hidden" name="clientCode" id="clientCode">
                         <input type="hidden" name="action" id="action">
                         <input type="hidden" name="fatid" id="fatid">
                         <input type="hidden" name="pagid" id="pagid">
@@ -352,7 +367,9 @@
                   </div>
 
                 <!--  body-right -->
-                  <div class="max-modal-body-right"></div>
+                  <div class="max-modal-body-right" id="createdFats">
+                    
+                  </div>
 
               </div>
 

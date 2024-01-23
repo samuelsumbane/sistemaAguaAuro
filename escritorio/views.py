@@ -72,9 +72,11 @@ def selecionarUmaFatura(request):
         meses = ('Janeiro', 'Fevereiro', 'Marco', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembr',)
         mesAtualNr = dataEHoraAtual.strftime('%m')
         mesAtualText = meses[int(mesAtualNr) - 1]
+        anoAtual = dataEHoraAtual.strftime('%Y')
+        
         
         try:
-            data = Fatura.objects.filter(fat_code_id=codigo, fat_mes=mesAtualText, fat_ano=ano).count()
+            data = Fatura.objects.filter(fat_code_id=codigo, fat_mes=mesAtualText, fat_ano=anoAtual).count()
             if data > 0:
                 return JsonResponse({'data': '405'}) # fatura do mesmo mes encontrada
             else:        
@@ -172,6 +174,8 @@ def criarFatura(request):
         action = request.POST.get('action')
         userid = request.POST.get('userid')
         
+        codigo = request.POST.get('clientCode')
+        
         if action == "editarFatura":
             fatid = request.POST.get('fatid')
             pagid = request.POST.get('pagid')
@@ -197,7 +201,9 @@ def criarFatura(request):
             fatura.fat_key = 1
             fatura.valordafatura = valordafatura
             fatura.fat_emissao = fat_emissao
-            fatura.save()
+            fatura.save() # nao deve salvar so neste momento 
+            
+            datafat = {'fatid':fatcode, 'clientcode':codigo, 'valordafatura':valordafatura, 'fat_mes':mes_atual, 'fat_ano':ano_atual}
 
             saveAtivity("F. Criada", valordafatura, userid, 'infinity')
             
@@ -214,7 +220,7 @@ def criarFatura(request):
             pag.save()
 
             data = '200'
-        return JsonResponse({'data': data})
+        return JsonResponse({'data': data, 'fatdata':datafat})
 
 
 
