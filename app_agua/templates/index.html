@@ -7,12 +7,17 @@
 
 <script src="{% static 'js/functions.js' %}"></script>
 
+<style>
+  #datesChart {
+      max-height: 400px; /* Ajuste conforme necessário */
+  }
+</style>
 
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-spinner"></div>
 </div>
 
-<main>
+<main class="dashboard">
     <div class="home-page">
     
         <div class="home-top">
@@ -89,7 +94,6 @@
                       <canvas id="datesChart"></canvas>
                     </div>
                       
-                      
                       <script>
                         new Chart(document.getElementById("datesChart"), {
                             type: 'bar',
@@ -110,17 +114,29 @@
                             ]
                             },
                             options: {
-                            title: {
-                                display: true,
-                                text: 'Lucro mensal de todos os productos'
-                            },
-                            legend: { display: false }
+                              title: {
+                                  display: true,
+                                  text: 'Lucro mensal de todos os productos'
+                              },
+                              legend: { display: false },
+                              layout: {
+                                  padding: {
+                                      top: 20, // Ajuste conforme necessário
+                                      bottom: 20 // Ajuste conforme necessário
+                                  }
+                              },
+                              scales: {
+                                  y: {
+                                      beginAtZero: true
+                                  }
+                              }
                             },
                             plugins:[ChartDataLabels]
                         });
                     </script>
 
                   </div> 
+                  <br>
                 
                  <!-- para chart de loja (Caso pressiga)
                     <div class="home-center-second-chart-2">
@@ -135,11 +151,47 @@
                 <h3 id="date"></h3>
               </div>
             </div>
+
+            <div class="home-center-third">
+              <div class="home-center-third-first">
+                <div>
+                  <h2>Faturas Emitidas</h2>
+                </div>
+                <div>
+                  <h2 id="faturasEmitidas"></h2>
+                </div>
+              </div>
+              <div class="home-center-third-second">
+                <div>
+                  <h2>V. Acomulado</h2>
+                </div>
+                <div>
+                  <h2>23000</h2>
+                </div>
+              </div>
+              <div class="home-center-third-third">
+                <div>
+                  <h2 class="third-thrid-text">F. Pagas</h2>
+                  <h2 class="valuetext">89</h2>
+                </div>
+
+                <div>
+                  <h2 class="third-thrid-text">F. Pendentes</h2>
+                  <h2 class="valuetext">20</h2>
+                </div>
+             
+              </div>
+
+              <div class="home-center-third-fourth">
+
+              </div>
+            </div>
           </div>
-      
+        
+        <div class="home-bottom">
+          
+        </div>  
     </div>
-
-
 </main>
 
 
@@ -150,8 +202,8 @@
   $('document').ready(function(){
 
 
-    let tempo = returnTime();
-    let data = returnDate();
+    // let tempo = returnTime();
+    // let data = returnDate();
 
     (function updatetime() {
       document.querySelector('#time').textContent = returnTime();
@@ -183,6 +235,7 @@
           document.querySelector('#clientactive').textContent = (response['clientLenActive'])
           document.querySelector('#clientdesactived').textContent = (response['clientLen'] - response['clientLenActive'])
 
+          document.querySelector('#faturasEmitidas').textContent = response['faturasEmitidas']
 
           }, error: function(response){
             console.log('Erro: ', response)

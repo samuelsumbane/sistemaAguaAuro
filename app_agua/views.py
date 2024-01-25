@@ -4,10 +4,9 @@ from django.shortcuts import render, redirect
 from .models import *
 from django.contrib.auth.decorators import login_required
 from datetime import datetime, date 
-# from escritorio.models import *
+from escritorio.models import *
 from app_agua.models import *
 from django.db.models import Q
-# Create your views here.
 dataEHoraAtual = datetime.now()
 from pro_agua.functions import *
 from django.contrib.auth import get_user_model
@@ -273,8 +272,13 @@ def numeroTotal(request):
     
     userLen = User.objects.filter().count()
     userLenActive = User.objects.filter(is_active='True').count()
+    
+    faturasEmitidas = Fatura.objects.filter().count()
+    
+    # faturasPagas = Fatura.objects.filter().count()
+    # faturasPendentes = Fatura.objects.filter()
         
-    return JsonResponse({'clientLen':clientLen, 'clientLenActive':clientLenActive, 'userLen':userLen, 'userLenActive':userLenActive})
+    return JsonResponse({'clientLen':clientLen, 'clientLenActive':clientLenActive, 'userLen':userLen, 'userLenActive':userLenActive, 'faturasEmitidas':faturasEmitidas})
 
     
     
