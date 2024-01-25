@@ -7,6 +7,10 @@ from django.db.models import Q
 from datetime import datetime
 from django.core.serializers import serialize
 from app_agua.views import saveAtivity
+from django.db.models import F
+
+# from django.core import serializers
+# from django.core.serializers.json import DjangoJSONEncoder
 
 
 dataEHoraAtual = datetime.now()
@@ -149,8 +153,24 @@ def selecionarPagsDever(request):
     if request.method == 'GET':
         codigo = request.GET.get('codigo')
         try:
-            filtered_pagamentos = Pagamento.objects.filter(pag_code_id=codigo).values()
-            data = list(filtered_pagamentos)
+ 
+            filtered_pagamentos = Pagamento.objects.exclude(pag_totalpago=F('valordafatura')).filter(pag_code_id=codigo)
+
+            data = []
+            for pagamento in filtered_pagamentos:
+                pagamento_data = {
+                    'pag_id': pagamento.pag_id,
+                    'pag_code': pagamento.pag_code_id,
+                    'valordafatura': pagamento.valordafatura,
+                    'pag_totalpago': pagamento.pag_totalpago,
+                    'pag_divida': pagamento.pag_divida,
+                    'pag_mes': pagamento.pag_mes,
+                    'pag_ano': pagamento.pag_ano,
+                    'pag_key': pagamento.pag_key,
+                    'pag_idgroup': pagamento.pag_idgroup,
+                }
+                data.append(pagamento_data)
+            
             return JsonResponse({'data': data})
 
         except ObjectDoesNotExist:

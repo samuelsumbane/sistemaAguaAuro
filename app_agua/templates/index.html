@@ -166,18 +166,18 @@
                   <h2>V. Acomulado</h2>
                 </div>
                 <div>
-                  <h2>23000</h2>
+                  <h2 id="valorAcomulado"></h2>
                 </div>
               </div>
               <div class="home-center-third-third">
                 <div>
                   <h2 class="third-thrid-text">F. Pagas</h2>
-                  <h2 class="valuetext">89</h2>
+                  <h2 class="valuetext" id="faturasPagas"></h2>
                 </div>
 
                 <div>
                   <h2 class="third-thrid-text">F. Pendentes</h2>
-                  <h2 class="valuetext">20</h2>
+                  <h2 class="valuetext" id="faturasPendentes"></h2>
                 </div>
              
               </div>
@@ -236,6 +236,9 @@
           document.querySelector('#clientdesactived').textContent = (response['clientLen'] - response['clientLenActive'])
 
           document.querySelector('#faturasEmitidas').textContent = response['faturasEmitidas']
+          document.querySelector('#valorAcomulado').textContent = parseFloat(response['valorAcomulado']).toFixed(2)
+          document.querySelector('#faturasPagas').textContent = response['faturasPagas']
+          document.querySelector('#faturasPendentes').textContent = parseInt(response['faturasEmitidas']) - parseInt(response['faturasPagas'])
 
           }, error: function(response){
             console.log('Erro: ', response)

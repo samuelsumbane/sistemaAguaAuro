@@ -145,6 +145,7 @@
                         document.querySelector('#minRecibosDiv').innerHTML = ""
 
                         let pagData = response['data']
+
                         if(pagData == "404"){
                             clientSemReciboOuPagas()
                         }else{
@@ -152,53 +153,59 @@
                             dividatotal = 0
                             $("#idgroupinput").val(groupid)
 
-                            for(let pg = 0;pg < nrData;pg++){
-                                let mindata = pagData[pg]
-                                if(pagData[pg]['pag_totalpago'] < pagData[pg]['valordafatura'] || pagData[pg]['pag_divida'] > 0){
-              
-                                    let valoremfalta
-                                    if(mindata['pag_totalpago'] != ''){
-                                        valoremfalta = parseFloat(mindata['valordafatura']) - parseFloat(mindata['pag_totalpago'])
-                                    }else{
-                                        valoremfalta = parseFloat(mindata['valordafatura']) - 0
-                                    }   
+                            if(nrData == 0){
+                                $('#minRecibosDiv').append(`<p style="color:green;text-align:center">Não tem pagamento pendente.</p>`)
+                            }else{
+                                for(let pg = 0;pg < nrData;pg++){
+                                    let mindata = pagData[pg]
+                                    if(pagData[pg]['pag_totalpago'] < pagData[pg]['valordafatura'] || pagData[pg]['pag_divida'] > 0){
+                
+                                        let valoremfalta
+                                        if(mindata['pag_totalpago'] != ''){
+                                            valoremfalta = parseFloat(mindata['valordafatura']) - parseFloat(mindata['pag_totalpago'])
+                                        }else{
+                                            valoremfalta = parseFloat(mindata['valordafatura']) - 0
+                                        }   
 
-                                    $('#minRecibosDiv').append(`
+                                        $('#minRecibosDiv').append(`
 
-                                        <input type="hidden" name="divsLen" id="divsLen" value="${nrData}">
+                                            <input type="hidden" name="divsLen" id="divsLen" value="${nrData}">
 
-                                        <div class="codeAndName" style="width:46%;min-width:230px;margin-bottom:20px">
-                                            <input type="hidden" name="pagid${pg}" id="pagid${pg}" value="${mindata['pag_code_id']}">
-                                            
-                                            <input type="hidden" name="mes${pg}" value="${mindata['pag_mes']}">
-                                            <input type="hidden" name="ano${pg}" value="${mindata['pag_ano']}">
-                                            
+                                            <div class="codeAndName" style="width:46%;min-width:230px;margin-bottom:20px">
+                                                <input type="hidden" name="pagid${pg}" id="pagid${pg}" value="${mindata['pag_code_id']}">
+                                                
+                                                <input type="hidden" name="mes${pg}" value="${mindata['pag_mes']}">
+                                                <input type="hidden" name="ano${pg}" value="${mindata['pag_ano']}">
+                                                
 
-                                            <label for="">M. Da Fatura: <input type="text" class="inputTipoLabel" value="${mindata['pag_mes']} / ${mindata['pag_ano']}"  readOnly/></label> 
-                                            <br/>
-                                            <label for="">V. Da Fatura: <input type="text" class="inputTipoLabel" value="${mindata['valordafatura']}"  readonly/></label> <br/>
+                                                <label for="">M. Da Fatura: <input type="text" class="inputTipoLabel" value="${mindata['pag_mes']} / ${mindata['pag_ano']}"  readOnly/></label> 
+                                                <br/>
+                                                <label for="">V. Da Fatura: <input type="text" class="inputTipoLabel" value="${mindata['valordafatura']}"  readonly/></label> <br/>
 
-                                            <label for="">Total Pago: <input type="text" class="inputTipoLabel" value="${mindata['pag_totalpago']}" readonly/></label> <br/>
+                                                <label for="">Total Pago: <input type="text" class="inputTipoLabel" value="${mindata['pag_totalpago']}" readonly/></label> <br/>
 
-                                            <input type="hidden" class="inputTipoLabel" value="${mindata['pag_id']}" readonly/>
+                                                <input type="hidden" class="inputTipoLabel" value="${mindata['pag_id']}" readonly/>
 
-                                            <label for="">V. Em Falta: <input type="text"  class="inputTipoLabel" value="${valoremfalta}" readonly/></label> <br/>
+                                                <label for="">V. Em Falta: <input type="text"  class="inputTipoLabel" value="${valoremfalta}" readonly/></label> <br/>
 
-                                            <label for="">V. Fat. Pagar: </label>
-                                            <input type="number" class="formTextMinInput" style="width:80px" name="valorapagar${pg}" /> 
-                                            <br />
-                                            <label for="">Divida: <input type="number" class="inputTipoLabel" value="${mindata['pag_divida']}" readonly /></label> <br/>
+                                                <label for="">V. Fat. Pagar: </label>
+                                                <input type="number" class="formTextMinInput" style="width:80px" name="valorapagar${pg}" /> 
+                                                <br />
+                                                <label for="">Divida: <input type="number" class="inputTipoLabel" value="${mindata['pag_divida']}" readonly /></label> <br/>
 
-                                            <label for="">V. Div. Pagar: </label> 
-                                            <input type="number" class="formTextMinInput" style="width:80px" name="dividaapagar${pg}" /> 
-                                            <br/>
-                                        </div>
-                                    `)
-                                    dividatotal += parseFloat(mindata['pag_divida'])
+                                                <label for="">V. Div. Pagar: </label> 
+                                                <input type="number" class="formTextMinInput" style="width:80px" name="dividaapagar${pg}" /> 
+                                                <br/>
+                                            </div>
+                                        `)
+                                        dividatotal += parseFloat(mindata['pag_divida'])
 
+                                    }
+                                    $('#divida').val(dividatotal)
                                 }
-                                $('#divida').val(dividatotal)
                             }
+
+                            
                             // console.table(pagData)
                             // console.log(pagData.length)
                         }
@@ -254,7 +261,9 @@
 
                             let pagdata = response['data']
                             let lenpagdata = pagdata.length
+         
                             document.querySelector('#fatResults').innerHTML = ''
+         
                             let clientdivida = 0
                             pagdata.map(function(pagdata){    
                                 $('#fatResults').append(`
@@ -270,7 +279,7 @@
                             })
                             document.querySelector('#dividavalue').textContent = clientdivida
 
-                            console.log(response['dataCliente'])
+                            // console.log(response['dataCliente'])
                             document.querySelector('#docnomecliente').textContent = response['dataCliente'][0]['nome_cliente'] 
                             document.querySelector('#docbairro').textContent = response['dataCliente'][0]['endereco_cliente'] 
 
@@ -317,7 +326,7 @@
           <div class="titleDiv"><h2>Recibos</h2></div>
 
           <div class="navDiv">
-              <button class="addButton" id="openModal" style="margin-right:10px" title="Criar fatura"></button>
+              <button class="addButton" id="openModal" style="margin-right:10px" title="Pagar faturas"></button>
               <a href="{% url 'faturas' %}"><button class="btn"  style="margin-right:10px" title="Pagina de faturas">Faturas</button></a>
           </div>
 
@@ -338,7 +347,7 @@
                         
                         {% csrf_token %}
 
-                          <button type="button" class="btn" id="start">Start</button>
+                          <!-- <button type="button" class="btn" id="start">Start</button> -->
                         <div class="reciboInputModal">
                             <label>Cliente</label>
                             <select id="clienteSelect">

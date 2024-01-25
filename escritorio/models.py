@@ -2,6 +2,7 @@ from django.db import models
 from django.views.generic import ListView
 from app_agua.models import *
 
+
 '''
 Total de Faturas Emitidas:
 

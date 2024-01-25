@@ -11,6 +11,7 @@ dataEHoraAtual = datetime.now()
 from pro_agua.functions import *
 from django.contrib.auth import get_user_model
 User = get_user_model()
+from django.db.models import F
 
 def home(request):
     return render(request, 'index.html')
@@ -275,10 +276,14 @@ def numeroTotal(request):
     
     faturasEmitidas = Fatura.objects.filter().count()
     
-    # faturasPagas = Fatura.objects.filter().count()
-    # faturasPendentes = Fatura.objects.filter()
+    valorAcomulado = Fatura.objects.filter().values()
+    vA = 0
+    for v in valorAcomulado:
+        vA += v['valordafatura']
+    
+    faturasPagas = Pagamento.objects.filter(pag_totalpago=F('valordafatura')).count()
         
-    return JsonResponse({'clientLen':clientLen, 'clientLenActive':clientLenActive, 'userLen':userLen, 'userLenActive':userLenActive, 'faturasEmitidas':faturasEmitidas})
+    return JsonResponse({'clientLen':clientLen, 'clientLenActive':clientLenActive, 'userLen':userLen, 'userLenActive':userLenActive, 'faturasEmitidas':faturasEmitidas, 'valorAcomulado':vA, 'faturasPagas':faturasPagas})
 
     
     
