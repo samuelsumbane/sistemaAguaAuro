@@ -8,6 +8,9 @@ from datetime import datetime
 from django.core.serializers import serialize
 from app_agua.views import saveAtivity
 from django.db.models import F
+from datetime import datetime, timedelta
+from django.http import HttpResponse
+from django.utils import timezone
 
 # from django.core import serializers
 # from django.core.serializers.json import DjangoJSONEncoder
@@ -152,6 +155,7 @@ def selecionarParaEditarFatura(request):
 def selecionarPagsDever(request):
     if request.method == 'GET':
         codigo = request.GET.get('codigo')
+
         try:
  
             filtered_pagamentos = Pagamento.objects.exclude(pag_totalpago=F('valordafatura')).filter(pag_code_id=codigo)
@@ -178,6 +182,20 @@ def selecionarPagsDever(request):
             return JsonResponse({'data': data})
 
 
+def fatVenc(day):
+    date = datetime.now().date()
+    proximoMes = date.month + 1
+    if proximoMes == 13 :
+        proximoMes = '01'
+        ano = date.year + 1
+    else:
+        if proximoMes < 10:
+            proximoMes = f"0{proximoMes}"
+        ano = date.year
+        
+    fat_vencimento = f"{ano}-{proximoMes}-{day}"
+    return fat_vencimento
+
 def criarFatura(request):
     if request.method == 'POST':
         
@@ -185,7 +203,9 @@ def criarFatura(request):
         meses = ('Janeiro', 'Fevereiro', 'Marco', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',)
         mes = dataEHoraAtual.strftime('%m')
         mes_atual = meses[int(mes) - 1]
-        fat_emissao = dataEHoraAtual.strftime('%d.%m.%Y')
+        fat_emissao = dataEHoraAtual.strftime('%Y-%m-%d')
+        dayvenc = request.POST.get('dayvencimento')
+        fat_vencimento = fatVenc(dayvenc) 
 
         leituraatual = request.POST.get('leituraatual')
         fatcode = request.POST.get('fatCode')
@@ -221,7 +241,8 @@ def criarFatura(request):
             fatura.fat_key = 1
             fatura.valordafatura = valordafatura
             fatura.fat_emissao = fat_emissao
-            fatura.save() # nao deve salvar so neste momento 
+            fatura.fat_vencimento = fat_vencimento
+            fatura.save() 
             
             datafat = {'fatid':fatcode, 'clientcode':codigo, 'valordafatura':valordafatura, 'fat_mes':mes_atual, 'fat_ano':ano_atual}
 
@@ -295,9 +316,9 @@ class recibos(ListView):
 
 
 
+# sera que ainda tem funcao?
 def selecionarUmRecigo(request):
     pass
-
 
 def retornaridgroup():
     idgroup = dataEHoraAtual.strftime('%d%m%H%M%S')
@@ -309,7 +330,10 @@ def pagarFatura(request):
         divlen = request.POST.get('divsLen')
         userid = request.POST.get('userid')
         idgroup = request.POST.get('idgroupinput')
-
+        
+        # multar = request.POST.ge('multar')
+        # valormulta = request.POST.ge('valormulta')
+        # vencimentoday = request.POST.ge('vencimentoday')
                
         for i in range(int(divlen)):
             valordafatura = request.POST.get(f"valorapagar{i}")
@@ -352,3 +376,33 @@ def pagPorId(request):
     return JsonResponse({'data':list(pags)})
 
 
+def aplicarMulta(request):
+    hoje = timezone.now().date()
+
+    # Filtra faturas que não foram totalmente pagas e estão vencidas
+    faturas_vencidas = Fatura.objects.filter(
+        fat_emissao__lte=hoje,
+        fat_code__pagamento__pag_totalpago__lt=models.F('valordafatura')
+    ).exclude(fat_code__pagamento__pag_totalpago__isnull=True)
+
+    for fatura in faturas_vencidas:
+        # Verifica se a fatura está vencida com base no prazo de pagamento
+        dias_em_atraso = (hoje - fatura.fat_vencimento).days
+
+        if dias_em_atraso > 1:
+            multa = 0
+            if hoje.day == 11:
+                multa = 50
+            elif 12 <= hoje.day:
+                multa = 10
+
+            if multa > 0:
+                # Corrige o valor_multa para o valor real da multa
+                RegistroMulta.objects.create(fatura=fatura, valor_multa=multa, data_aplicacao=hoje)
+
+                # Atualiza a fatura com o valor da multa
+                # fatura.fat_divida += multa
+                # fatura.save()
+            return JsonResponse({'v':multa})
+
+    return HttpResponse("Multas aplicadas com sucesso.")

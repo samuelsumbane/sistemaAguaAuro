@@ -190,6 +190,7 @@
                 // let mesPassado = 'Janeiro'
                 let anoPassado = mesAnoPassado[1]
                 // let anoPassado = '2024'
+                $('#dayvencimento').val(defArray.def_vencimentoday)
 
                 $.ajax({
                     url: "{% url 'selecionarUmaFatura'  %}",
@@ -333,6 +334,7 @@
                         <input type="hidden" name="action" id="action">
                         <input type="hidden" name="fatid" id="fatid">
                         <input type="hidden" name="pagid" id="pagid">
+                        <input type="hidden" name="dayvencimento" id="dayvencimento">
 
                         <div>
                              <label>Leitura anterior</label>

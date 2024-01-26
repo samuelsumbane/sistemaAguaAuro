@@ -135,6 +135,7 @@
 
                 var groupid = `${anocompleto}${mes}${dia}${hora}${minutos}${segundos}`
 
+             
                 $.ajax({
                     url: "{% url 'selecionarPagsDever'  %}",
                     type: 'GET',
@@ -142,6 +143,11 @@
                     // dataType:"json",
                     success: function (response){
                         $('#reciboForm')[0].reset()
+
+                        // $('#multar').val(defArray.multar)
+                        // $('#valormulta').val(defArray.def_multaforadoprazo)
+                        // $('#vencimentoday').val(defArray.def_vencimentoday);
+
                         document.querySelector('#minRecibosDiv').innerHTML = ""
 
                         let pagData = response['data']
@@ -199,13 +205,10 @@
                                             </div>
                                         `)
                                         dividatotal += parseFloat(mindata['pag_divida'])
-
                                     }
                                     $('#divida').val(dividatotal)
                                 }
                             }
-
-                            
                             // console.table(pagData)
                             // console.log(pagData.length)
                         }
@@ -215,7 +218,7 @@
                 })
             })
 
-             $('#reciboForm').submit(function(e){
+            $('#reciboForm').submit(function(e){
                 e.preventDefault();
                 // let datapagamento = $('#datapagamento').val()
                 let datapagamento = '32'
@@ -357,6 +360,10 @@
 
                         <input type="hidden" name="userid" id="userid" value="{{ user.id }}">
 
+                        <input type="text" name="multar" id="multar">
+                        <input type="text" name="valormulta" id="valormulta">
+                        <input type="text" name="vencimentoday" id="vencimentoday">
+
                         <input type="hidden" name="idgroupinput" id="idgroupinput">
 
                         <!-- fats a pagar -->
@@ -378,7 +385,6 @@
                       </div>
                       
                     </form>
-
               </div>
 
               <div class="medium-modal-footer"></div>

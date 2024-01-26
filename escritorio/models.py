@@ -54,6 +54,7 @@ class Fatura(models.Model):
     fat_key = models.IntegerField()
     valordafatura = models.IntegerField()
     fat_emissao = models.CharField(max_length=15)
+    fat_vencimento = models.DateField(default="2000-01-01")
 
     class Meta:
         verbose_name = 'Fatura'
@@ -76,3 +77,11 @@ class Pagamento(models.Model):
 
     def __str__(self):
         return f"Recibo {self.pag_id} - Cliente: {self.pag_code.codigo_cliente}"
+
+class RegistroMulta(models.Model):
+    fatura = models.ForeignKey(Fatura, on_delete=models.CASCADE)
+    valor_multa = models.FloatField()
+    data_aplicacao = models.DateField()
+
+    def __str__(self):
+        return f"Registro de Multa - Fatura {self.fatura.fat_id}, Valor: {self.valor_multa}, Data: {self.data_aplicacao}"

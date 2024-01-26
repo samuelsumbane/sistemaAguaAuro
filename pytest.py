@@ -1,5 +1,17 @@
 from random import randint
 from datetime import datetime
+from datetime import datetime
+dataEHoraAtual = datetime.now()
+
+
+mes = datetime.now().date()
+print(mes.day)
+
+# print(fat_vencimento)
+
+
+
+
 
 # letras = ('0', '1', '2', '3', '4', '5', '6', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',)
 
@@ -8,23 +20,31 @@ from datetime import datetime
 #     senha += str(letras[randint(2, 8)])
 # print(senha)
 
-dataEHoraAtual = datetime.now()
+# dataEHoraAtual = datetime.now()
 
 
-def retornarHora(value='HM'):
-    if value == 'HM':
-        hora = dataEHoraAtual.strftime('%H:%M')
-    else:
-        hora = dataEHoraAtual.strftime('%H:%M:%S')        
-    return hora
+# def retornarHora(value='HM'):
+#     if value == 'HM':
+#         hora = dataEHoraAtual.strftime('%H:%M')
+#     else:
+#         hora = dataEHoraAtual.strftime('%H:%M:%S')        
+#     return hora
 
 
-s = dataEHoraAtual.strftime('%d%m%H%M%S')
-print(s)
+# s = dataEHoraAtual.strftime('%d%m%H%M%S')
+# print(s)
+
+# hoje = datetime.now().date()
+# hoje_formatado = hoje.strftime("%d.%m.%Y")
+# # diavenc = 
+# diaemissao = "2024-01-02"
+
+# v = (diaemissao - hoje).days()
+# print(v)
 
 
-
-
+# def nextMonth(data):
+    
 # va = retornarValidade()
 # print(va)
 

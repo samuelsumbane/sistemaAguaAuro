@@ -20,6 +20,7 @@ urlpatterns = [
     path('', include('contas.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('atividades', atividade.as_view(), name="atividades"),
-    path('relatorio', relatorio, name="relatorio"),
+    path('relatorio/', relatorio, name="relatorio"),
+    path('aplicarMulta/', aplicarMulta, name="aplicarMulta")
     
 ]
