@@ -13,6 +13,7 @@ urlpatterns = [
     path('selecionarTodosClientes/', selecionarTodosClientes, name="selecionarTodosClientes"),
     path('selecionarCliente/', selecionarCliente, name="selecionarCliente"),
     path('numeroTotal', numeroTotal, name="numeroTotal"),
+    path('chartPagamento/', chartPagamento, name="chartPagamento"),
     path('definicoes/', definicao, name="definicoes"),
     path('selecionarDefinicoes/', selecionarDefinicoes, name="selecionarDefinicoes"),
     path('updateDef/', updateDef, name="updateDef"),    

@@ -12,6 +12,7 @@ from pro_agua.functions import *
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from django.db.models import F
+from django.db.models import Sum
 
 def home(request):
     return render(request, 'index.html')
@@ -280,14 +281,19 @@ def numeroTotal(request):
     
     faturasEmitidas = Fatura.objects.filter().count()
     
-    valorAcomulado = Fatura.objects.filter().values()
+    valorAcomulado = Pagamento.objects.filter().values()
     vA = 0
     for v in valorAcomulado:
-        vA += v['valordafatura']
+        vA += v['pag_totalpago']
     
     faturasPagas = Pagamento.objects.filter(pag_totalpago=F('valordafatura')).count()
-        
+            
     return JsonResponse({'clientLen':clientLen, 'clientLenActive':clientLenActive, 'userLen':userLen, 'userLenActive':userLenActive, 'faturasEmitidas':faturasEmitidas, 'valorAcomulado':vA, 'faturasPagas':faturasPagas})
 
-    
+
+def chartPagamento(request):
+    if request.method == 'GET':
+        somaPagamento = Pagamento.objects.values('pag_mes').annotate(valor=Sum('pag_totalpago'))
+        return JsonResponse({'somaPagamento':list(somaPagamento),})
+        
     

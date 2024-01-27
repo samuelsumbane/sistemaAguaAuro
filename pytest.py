@@ -51,6 +51,3 @@ dataEHoraAtual = datetime.now()
     
 # va = retornarValidade()
 # print(va)
-
-
-

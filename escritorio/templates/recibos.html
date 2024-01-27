@@ -214,6 +214,9 @@
                 })
             })
 
+            
+            // "SELECT pag_mes as mes, SUM(pag_totalpago) as valor from Pagamento group BY mes"
+
             $('#reciboForm').submit(function(e){
                 e.preventDefault();
                 for(const a of document.querySelectorAll('.dividapagar')){

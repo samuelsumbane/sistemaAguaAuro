@@ -77,12 +77,11 @@ def selecionarUmaFatura(request):
         mes = request.GET.get('mes')
         ano = request.GET.get('ano')
         
-        meses = ('Janeiro', 'Fevereiro', 'Marco', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembr',)
+        meses = ('Janeiro', 'Fevereiro', 'Marco', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',)
         mesAtualNr = dataEHoraAtual.strftime('%m')
         mesAtualText = meses[int(mesAtualNr) - 1]
         anoAtual = dataEHoraAtual.strftime('%Y')
-        
-        
+                
         try:
             data = Fatura.objects.filter(fat_code_id=idcliente, fat_mes=mesAtualText, fat_ano=anoAtual).count()
             if data > 0:

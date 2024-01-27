@@ -7,6 +7,24 @@
 
 <script src="{% static 'js/functions.js' %}"></script>
 
+<script>
+    // console.log(response['somaPagamento'])   
+  // let somaPagamentoData = []  
+  // $.ajax({
+  //     type: 'GET',
+  //     url: '{% url "chartPagamento"  %}',
+  //     dataType:"json",
+  //     success: function (response){
+  //       somaPagamentoData = response['somaPagamento']
+  //     }, error: function(response){
+  //         console.log('Erro: ', response)
+  //     }
+  // }).then(()=>{
+  //   console.log(somaPagamentoData)
+  // })
+
+</script>
+
 <style>
   #datesChart {
       max-height: 400px; /* Ajuste conforme necessário */
@@ -41,7 +59,7 @@
               <div class="home-center-first-left">
                 <div>
                   <h2>Clientes</h2>
-                  <h2 id="clientlen">89</h2>
+                  <h2 id="clientlen"></h2>
                 </div>
 
                 <div>
@@ -88,52 +106,66 @@
             <div class="home-center-second">
               <div class="home-center-second-chart">
       
-                  <div class="home-center-second-chart-1">  
+                  <div class="home-center-second-chart-1"> 
+
                     <!-- <BarchartDiv pagvalues={pagvalues} /> -->
                     <div class="datesChart" id="chart">
                       <canvas id="datesChart"></canvas>
                     </div>
                       
-                      <script>
-                        new Chart(document.getElementById("datesChart"), {
+                    <script>
+                      $.ajax({
+                        type: 'GET',
+                        url: '{% url "chartPagamento"  %}',
+                        dataType: "json",
+                        success: function (response) {
+                          let somaPagamentoData = response['somaPagamento'];
+                          
+                          console.log(somaPagamentoData[0]['pag_mes']);
+                    
+                          new Chart(document.getElementById("datesChart"), {
                             type: 'bar',
                             data: {
-                            // labels: json_encode($days),
-                            labels: ['se', 'ter', 'qua'],
-                            datasets: [
+                              labels: somaPagamentoData.map(item => item.pag_mes),
+                              datasets: [
                                 {
-                                barPercentage: 1,
-                                barThickness: 18,
-                                maxBarThickness: 100,
-                                minBarLength: 14,
-                                label: "Faturas",
-                                type: "bar",
-                                backgroundColor:'rgb(0, 57, 82)',
-                                data: ['32', '54',  '93'],
+                                  barPercentage: 1,
+                                  barThickness: 18,
+                                  maxBarThickness: 100,
+                                  minBarLength: 14,
+                                  label: "Faturas pagas",
+                                  type: "bar",
+                                  backgroundColor: 'rgb(0, 57, 82)',
+                                  data: somaPagamentoData.map(item => item.valor)
                                 }
-                            ]
+                              ]
                             },
                             options: {
                               title: {
-                                  display: true,
-                                  text: 'Lucro mensal de todos os productos'
+                                display: true,
+                                text: 'Lucro mensal de todos os produtos'
                               },
                               legend: { display: false },
                               layout: {
-                                  padding: {
-                                      top: 20, // Ajuste conforme necessário
-                                      bottom: 20 // Ajuste conforme necessário
-                                  }
+                                padding: {
+                                  top: 20,
+                                  bottom: 20
+                                }
                               },
                               scales: {
-                                  y: {
-                                      beginAtZero: true
-                                  }
+                                y: {
+                                  beginAtZero: true
+                                }
                               }
                             },
-                            plugins:[ChartDataLabels]
-                        });
-                    </script>
+                            plugins: [ChartDataLabels]
+                          });
+                        },
+                        error: function (response) {
+                          console.log('Erro: ', response);
+                        }
+                      });
+                    </script>  
 
                   </div> 
                   <br>
