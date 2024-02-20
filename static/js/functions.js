@@ -1,10 +1,11 @@
 
 
+var meses = ["Janeiro", "Fevereiro","Marco", "Abril", "Maio","Junho", "Julho","Agosto", "Setembro","Outubro", "Novembro","Dezembro"]
+
 function mesano(value, position="t"){
     var date = new Date()
     var mes = date.getMonth() + 1
     var ano = date.getFullYear()
-    var meses = ["Janeiro", "Fevereiro","Marco", "Abril", "Maio","Junho", "Julho","Agosto", "Setembro","Outubro", "Novembro","Dezembro"]
 
     var returnMonth = ""
     position == "l" ? returnMonth = meses[mes -2] : position == 'n' ? returnMonth = meses[mes] : returnMonth = meses[mes -1]
@@ -13,9 +14,11 @@ function mesano(value, position="t"){
 }
 
 function thisOrLastYear(){
-    var thismonthandyear = mesano("ambos").split(" ")
-    var thismonth = thismonthandyear[0]
-    return thismonth === "Janeiro" ? `${"Dezembro"} ${thismonthandyear[1] - 1}` : thismonthandyear;
+    var thismonthandyear = mesano("ambos", 'l').split(" ")
+    var date = new Date()
+    var mes = date.getMonth() + 1
+    currentmes = meses[mes -1]
+    return currentmes === "Janeiro" ? `${"Dezembro"} ${thismonthandyear[1] - 1}` : thismonthandyear;
 }
 
 

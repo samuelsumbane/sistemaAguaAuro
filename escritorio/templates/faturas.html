@@ -161,6 +161,7 @@
 
             $('.fecharButton').click(()=>{
                 document.querySelector('.max-modal').classList.remove("showModal")
+                $('#faturaForm')[0].reset()
             })
 
             var defArray = ''
@@ -183,11 +184,11 @@
                 $('#fatCode').val(parseInt(id_cliente))
                 codigo = clientSelectValue.split(' - ')[2]
 
-                // var mesAnoPassado = thisOrLastYear().split(' ')
-                // let mesPassado = mesAnoPassado[0]
-                let mesPassado = 'Dezembro'
-                // let anoPassado = mesAnoPassado[1]
-                let anoPassado = '2023'
+                var mesAnoPassado = thisOrLastYear()
+                let mesPassado = mesAnoPassado[0]
+                // let mesPassado = 'Janeiro'
+                let anoPassado = mesAnoPassado[1]
+                // let anoPassado = '2024'
 
                 $.ajax({
                     url: "{% url 'selecionarUmaFatura'  %}",
@@ -266,7 +267,6 @@
                             }else{
                                 faturaEditadaComSucesso()
                             }
-                            document.querySelector('.max-modal').classList.remove("showModal")
 
                         }, error: function(response){
                             console.log('Erro: ', response)

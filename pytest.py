@@ -11,37 +11,18 @@ from datetime import datetime
 dataEHoraAtual = datetime.now()
 
 
-def retornarValidade(categoria='clientes'):
-    mesAtualNr = dataEHoraAtual.strftime('%m')
-    anoAtual = dataEHoraAtual.strftime('%Y')
-    
-    if categoria == 'clientes':
-        quartomes = int(mesAtualNr) + 4
-        if quartomes > 12:
-            valAno = int(anoAtual) + 1
-            valMes = quartomes - 12 
-            if valMes < 10:
-                valMes = f"0{quartomes - 12}"
-        else:
-            valMes = quartomes
-            valAno = anoAtual
-    
-    validade = f"{dataEHoraAtual.strftime('%d')}.{valMes}.{valAno}"
-    return validade
-
-
 def retornarHora(value='HM'):
     if value == 'HM':
         hora = dataEHoraAtual.strftime('%H:%M')
     else:
-        hora = dataEHoraAtual.strftime('%H:%M:%S')
-        
+        hora = dataEHoraAtual.strftime('%H:%M:%S')        
     return hora
 
 
-h = retornarHora('full')
-print(h)
-        
+s = dataEHoraAtual.strftime('%d%m%H%M%S')
+print(s)
+
+
 
 
 # va = retornarValidade()

@@ -58,7 +58,7 @@ function faturaDoMesJaCriada(){
     swal({
         icon: "error",
         title: 'Fatura do mês corrente encontrada',
-        text: 'Pode criar duas faturas do mesmo mês.'
+        text: 'Não pode criar duas faturas do mesmo mês.'
     })
 }
 

@@ -17,19 +17,21 @@
                 ajax: '{{ request.path }}?datatables=1',
                 serverSide: true,
                 columns: [
+                    { data: 'pag_id', visible: false},
                     { data: 'pag_code', title: 'Codigo' },
                     { data: 'nome_cliente', title: 'Nome' },
                     { data: 'valordafatura', title: 'L. Atual' },
-                    { data: 'pag_totalpago', title: 'C. Faturado' },
+                    { data: 'pag_totalpago', title: 'T. Pago' },
                     { data: 'pag_divida', title: 'Divida' },
                     { data: 'pag_mes', title: 'Mês' },
                     { data: 'pag_ano', title: 'Ano' },
+                    { data: 'pag_idgroup', visible: false},
                     {
                         data: null,
                         title: 'Ações',
                         render: function(data, type, row) {
                             return `<button type="button" class="updateButton" id="${row.pag_id}" title="Ëditar fatura"></button>
-                            <button type="button" class="printButton" id="${row.pag_id}" title="Imprimir fatura"></button>
+                            <button type="button" class="printButton" id="${row.pag_idgroup}" title="Imprimir fatura"></button>
                             `;
                     }
                 }
@@ -219,6 +221,19 @@
                     })
                 }    
             });
+
+            // divfaturaspagas
+            //             <p style="padding:5px 0 0 20px">dfasd</p>
+
+            $("#tabela").on('click', ".printButton", function(){
+                let idgroup = $(this).attr('id')
+                alert(idgroup)
+            })    
+               
+            $("#tabela").on('click', ".updateButton", function(){
+                let pagid = $(this).attr('id')
+                alert(pagid)
+            })
         })
 
     </script>
@@ -288,7 +303,66 @@
         </div>
 
         <div class='fatura-page-footer'></div>
+        
+        <div id="reciboDoc" style="width:600px;display: flex;flex-direction:column;background:white;border:2px solid ">
+            <div id="reciboHeader">
+                <div id="headerPic" style="width:60%;margin:auto;"><img src="../../static/imgs/fatlogo.jpg" width="100%" height="170px" alt="logo da recibo"></div>
+            </div>
+            <div id="reciboBody" style="width:96%;border:1px solid ;margin:auto">
+                <div>
+                    <div style="display:flex">
+                        <p style="padding-left:20px">Nome do cliente: &nbsp &nbsp&nbsp &nbsp </p>
+                        <p id="docnomecliente"></p>
+                    </div>
+                    
+                    <div style="display:flex;">
+                        <p style="padding-left:20px">Bairro: &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp </p>
+                        <p id="docbairro"></p>
+                    </div>
+                </div>
 
+                <div>
+                    <h2 style="text-align: center;">Faturas pagas</h2>
+                    <div style="width:90%;min-height:30px;height:auto;margin:auto;;background:red;" id="divfaturaspagas">
+                    
+                        <!-- # -->
+                    </div>    
+                    <br>
+                    <div style="padding-left:40px">
+                        <strong>Divida:</strong>
+                        <strong id="divida">32</strong>
+                        <strong>MT</strong>
+
+                    </div>                
+                </div>
+
+                <div>
+                    <h2 style="text-align: center;">Prazo de pagamento</h2>
+                    <p style="padding-left:20px">Pagamento apartir do dia 01 até dia 10</p>
+                    <p style="padding-left:20px">Das 07:30 até 15:30min</p>
+                    
+                    <div style="width:90%;border:2px solid;margin:auto">
+                        <h2 style="padding-left:10px">NB:</h2>
+                        <ul>
+                            <li>O pagamento é feito a partir do dia 25 de cada mês até dia 10 do mês seguinte, menos Sábado e Domingo</li>
+
+                            <li>A partir do dia 11 o cliente é sujeito ao pagamento de uma multa de 50 mts. No dia seguinte, a multa aumenta em 10 mts de cada dia até o fim de mês.</li>
+                            
+                            <li>A acumulacão de factura até 90 dias implica o corte de fornecimento de água e a taxa de religacao é de 1500.00 mts
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="width:90%;margin:auto;">
+                    <h2 style="text-align: center;">Assinatura do leitor.</h2>
+                    <h3 style="text-align: center;">........................................................................</h3>
+                
+                </div>
+            </div>
+            <br/>
+</div>
+    
     </div>
 
 

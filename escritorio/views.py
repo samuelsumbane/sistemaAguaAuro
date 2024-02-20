@@ -77,7 +77,6 @@ def selecionarUmaFatura(request):
             data = Fatura.objects.filter(fat_code_id=codigo, fat_mes=mesAtualText, fat_ano=ano).count()
             if data > 0:
                 return JsonResponse({'data': '405'}) # fatura do mesmo mes encontrada
-            
             else:        
                 try:
                     filteredFat = Fatura.objects.get(fat_code_id=codigo, fat_mes=mes, fat_ano=ano)
@@ -237,7 +236,6 @@ class recibos(ListView):
                     Q(fat_code__icontains=sv)
                     | Q(fat_mes__icontains=sv)
                     | Q(fat_ano__icontains=sv)
-
                 )
             filtered_count = qs.count()
             qs = qs[start: start + length]
@@ -245,6 +243,7 @@ class recibos(ListView):
             data = []
             for pag in qs:
                 row_data = {
+                    'pag_id': pag.pag_id,
                     'pag_code': pag.pag_code.codigo_cliente,
                     'nome_cliente':pag.pag_code.nome_cliente,
                     'valordafatura': pag.valordafatura,
@@ -252,6 +251,7 @@ class recibos(ListView):
                     'pag_divida': pag.pag_divida,
                     'pag_mes': pag.pag_mes,
                     'pag_ano': pag.pag_ano,
+                    'pag_idgroup': pag.pag_idgroup,
                     'acoes': None,  # Não é necessário enviar dados específicos aqui
                 }
                 data.append(row_data)
@@ -272,11 +272,17 @@ class recibos(ListView):
 def selecionarUmRecigo(request):
     pass
 
+
+def retornaridgroup():
+    idgroup = dataEHoraAtual.strftime('%d%m%H%M%S')
+    return idgroup
+
 def pagarFatura(request):
     if request.method == "POST":
         # pagCode = request.POST.get('pagCode')
         divlen = request.POST.get('divsLen')
         userid = request.POST.get('userid')
+        
         
         for i in range(int(divlen)):
             valordafatura = request.POST.get(f"valorapagar{i}")
@@ -286,17 +292,27 @@ def pagarFatura(request):
             anopag = request.POST.get(f'ano{i}')    
                 
             pagamento = Pagamento.objects.get(pag_code_id=id, pag_mes=mespag, pag_ano=anopag)
-            if float(pagamento.valordafatura) < float(valordafatura) or float(pagamento.pag_divida) < float(divida):
-                data = "203"
-            else:
-                pagamento.pag_totalpago += float(valordafatura)
-                pagamento.pag_divida -= float(divida)
-                pagamento.save()
-                saveAtivity("F. Paga", valordafatura, userid, 'infinity', id)
-                
-                data = "200"
-        
+            
+            if valordafatura != "" or divida != "":
+                if float(pagamento.valordafatura) < float(valordafatura) or float(pagamento.pag_divida) < float(divida):
+                    data = "203"
+                else:
+                    pagamento.pag_totalpago += float(valordafatura)
+                    pagamento.pag_divida -= float(divida)
+                    pagamento.pag_idgroup = dataEHoraAtual.strftime('%d%m%H%M%S')
+                    pagamento.save()
+                    saveAtivity("F. Paga", valordafatura, userid, 'infinity', id)
+                    
+                    data = "200"
+                         
+           
         return JsonResponse({'data': data})
                 
         
-        
+def pagPorIdGroup(request):
+    idgroup = request.GET['idgroup']
+    pags = Pagamento.filter(pag_idgroup=idgroup).values()
+    data = list(pags)
+    return JsonResponse({'data':data})
+
+
