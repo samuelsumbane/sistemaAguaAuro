@@ -13,4 +13,5 @@ urlpatterns = [
     path('selecionarPagsDever/', selecionarPagsDever, name="selecionarPagsDever"),  
     path('faturasPorIdGroup/', pagPorIdGroup, name="faturasPorIdGroup"),  
     path('pagPorId/', pagPorId, name="pagPorId"),
+    path('multas/', multas.as_view(), name="multas")
 ]

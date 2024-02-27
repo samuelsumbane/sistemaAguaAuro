@@ -249,9 +249,8 @@
     $.ajax({
         type: 'GET',
         url: '{% url "aplicarMulta"  %}',
-        // dataType:"json",
         success: function (response){
-          console.log('Success: ', response)
+          // console.log('Success: ', response)
         }, error: function (response){
           console.log('Erro: ', response)
         }

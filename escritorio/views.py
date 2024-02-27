@@ -73,6 +73,7 @@ class faturas(ListView):
 def selecionarUmaFatura(request):
     if request.method == 'GET':
         codigo = request.GET.get('codigo')
+        idcliente = request.GET.get('idcliente')
         mes = request.GET.get('mes')
         ano = request.GET.get('ano')
         
@@ -83,12 +84,12 @@ def selecionarUmaFatura(request):
         
         
         try:
-            data = Fatura.objects.filter(fat_code_id=codigo, fat_mes=mesAtualText, fat_ano=anoAtual).count()
+            data = Fatura.objects.filter(fat_code_id=idcliente, fat_mes=mesAtualText, fat_ano=anoAtual).count()
             if data > 0:
-                return JsonResponse({'data': '405'}) # fatura do mesmo mes encontrada
+                return JsonResponse({'data': '405'})  # fatura do mesmo mes encontrada
             else:        
                 try:
-                    filteredFat = Fatura.objects.get(fat_code_id=codigo, fat_mes=mes, fat_ano=ano)
+                    filteredFat = Fatura.objects.get(fat_code_id=idcliente, fat_mes=mes, fat_ano=ano)
 
                     data = {'fat_id': filteredFat.fat_id, 'fat_code': filteredFat.fat_code_id,
                             'leituraatual': filteredFat.leituraatual, 'fat_divida': filteredFat.fat_divida,
@@ -155,7 +156,6 @@ def selecionarParaEditarFatura(request):
 def selecionarPagsDever(request):
     if request.method == 'GET':
         codigo = request.GET.get('codigo')
-
         try:
  
             filtered_pagamentos = Pagamento.objects.exclude(pag_totalpago=F('valordafatura')).filter(pag_code_id=codigo)
@@ -171,6 +171,7 @@ def selecionarPagsDever(request):
                     'pag_mes': pagamento.pag_mes,
                     'pag_ano': pagamento.pag_ano,
                     'pag_key': pagamento.pag_key,
+                    'pag_code_id': pagamento.pag_code_id,
                     'pag_idgroup': pagamento.pag_idgroup,
                 }
                 data.append(pagamento_data)
@@ -324,27 +325,22 @@ def retornaridgroup():
     idgroup = dataEHoraAtual.strftime('%d%m%H%M%S')
     return idgroup
 
-def pagarFatura(request):
-         
+def pagarFatura(request):     
     if request.method == "POST":
         divlen = request.POST.get('divsLen')
         userid = request.POST.get('userid')
         idgroup = request.POST.get('idgroupinput')
         
-        # multar = request.POST.ge('multar')
-        # valormulta = request.POST.ge('valormulta')
-        # vencimentoday = request.POST.ge('vencimentoday')
-               
-        for i in range(int(divlen)):
+        for i in range(int(divlen)):            
             valordafatura = request.POST.get(f"valorapagar{i}")
             divida = request.POST.get(f'dividaapagar{i}')
             id = request.POST.get(f'pagid{i}')
             mespag = request.POST.get(f'mes{i}')
             anopag = request.POST.get(f'ano{i}')    
-                
-            pagamento = Pagamento.objects.get(pag_code_id=id, pag_mes=mespag, pag_ano=anopag)
             
-            if valordafatura != "" or divida != "":
+            if valordafatura != "":
+                pagamento = Pagamento.objects.get(pag_code_id=id, pag_mes=mespag, pag_ano=anopag)               
+             
                 if float(pagamento.valordafatura) < float(valordafatura) or float(pagamento.pag_divida) < float(divida):
                     data = "203"
                 else:
@@ -352,22 +348,25 @@ def pagarFatura(request):
                         pagamento.pag_totalpago += float(valordafatura)
                     else:
                         pagamento.pag_totalpago = float(valordafatura)
-                           
+                        
                     pagamento.pag_divida -= float(divida)
                     pagamento.pag_idgroup = idgroup
                     pagamento.save()
                     saveAtivity("F. Paga", valordafatura, userid, 'infinity', id)
                     data = "200"
-                         
+                            
         return JsonResponse({'data': data})
                      
-        
+# sera que funciona?       
 def pagPorIdGroup(request):
-    idgroup = request.GET['idgroup']
-    pags = Pagamento.objects.filter(pag_idgroup=idgroup).values()
-    data = list(pags)
-    dataCliente = list(Cliente.objects.filter(id_cliente=pags[0]['pag_code_id']).values())
-    return JsonResponse({'data':data, 'dataCliente':dataCliente})
+    if request.method == 'GET':
+        idgroup = request.GET['idgroup']
+        pags = Pagamento.objects.filter(pag_idgroup=idgroup).values()
+        data = list(pags)
+        pag = Pagamento.objects.get(pag_idgroup=idgroup)
+        # dataCliente = list(Cliente.objects.filter(id_cliente=pags[0]['pag_code_id']).values()) # funcionava antes.
+        dataCliente = list(Cliente.objects.filter(id_cliente=pags.pag_code_id).values())
+        return JsonResponse({'data':data, 'dataCliente':dataCliente})
 
 
 def pagPorId(request):
@@ -376,33 +375,82 @@ def pagPorId(request):
     return JsonResponse({'data':list(pags)})
 
 
+class multas(ListView):
+    model = RegistroMulta
+    template_name = "multas.html"
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.GET.get("datatables"):
+            draw = int(self.request.GET.get("draw", "1"))
+            length = int(self.request.GET.get("length", "10"))
+            start = int(self.request.GET.get("start", "0"))
+            sv = self.request.GET.get("search[value]", None)
+            qs = self.get_queryset().order_by("data_aplicacao")
+            if sv:
+                qs = qs.filter(
+                    Q(valor_multa__icontains=sv)
+                    | Q(data_aplicacao__icontains=sv)
+                )
+            filtered_count = qs.count()
+            qs = qs[start: start + length]
+
+   
+            data = []
+            for multa in qs:
+                row_data = {
+                    'codigo_cliente': multa.fatura.fat_code.codigo_cliente,
+                    'nome_cliente': multa.fatura.fat_code.nome_cliente,
+                    'valor_multa': "{:.2f}".format(multa.valor_multa),
+                    'data_aplicacao':multa.data_aplicacao,
+                }
+                data.append(row_data)
+
+            return JsonResponse(
+                {
+                    "recordsTotal": self.get_queryset().count(),
+                    "recordsFiltered": filtered_count,
+                    "draw": draw,
+                    "data": data,
+                },
+                safe=False,
+            )
+        return super().render_to_response(context, **response_kwargs)
+
+
 def aplicarMulta(request):
-    hoje = timezone.now().date()
+    if request.method == 'GET':
+        defs = Definicao.objects.get()
+        multar = defs.multar
+        
+        if multar == True:
+            
+            hoje = timezone.now().date()
 
-    # Filtra faturas que não foram totalmente pagas e estão vencidas
-    faturas_vencidas = Fatura.objects.filter(
-        fat_emissao__lte=hoje,
-        fat_code__pagamento__pag_totalpago__lt=models.F('valordafatura')
-    ).exclude(fat_code__pagamento__pag_totalpago__isnull=True)
+            faturas_vencidas = Fatura.objects.filter(
+                fat_emissao__lte=hoje,
+                fat_code__pagamento__pag_totalpago__lt=models.F('valordafatura')
+            ).exclude(fat_code__pagamento__pag_totalpago__isnull=True)
 
-    for fatura in faturas_vencidas:
-        # Verifica se a fatura está vencida com base no prazo de pagamento
-        dias_em_atraso = (hoje - fatura.fat_vencimento).days
+            for fatura in faturas_vencidas:
+                multas = RegistroMulta.objects.filter(fatura_id=fatura.fat_id, data_aplicacao=hoje).count()
+                
+                if multas == 0: # ainda nao foi multado hoje.
+                    dias_em_atraso = (hoje - fatura.fat_vencimento).days
 
-        if dias_em_atraso > 1:
-            multa = 0
-            if hoje.day == 11:
-                multa = 50
-            elif 12 <= hoje.day:
-                multa = 10
+                    pag = Pagamento.objects.get(pag_code_id=fatura.fat_code ,pag_mes=fatura.fat_mes, pag_ano=fatura.fat_ano)
 
-            if multa > 0:
-                # Corrige o valor_multa para o valor real da multa
-                RegistroMulta.objects.create(fatura=fatura, valor_multa=multa, data_aplicacao=hoje)
+                    if dias_em_atraso > 1:
+                        multa = 0
+                        if hoje.day == 11:
+                            multa = 50
+                        elif 12 <= hoje.day:
+                            multa = 10
 
-                # Atualiza a fatura com o valor da multa
-                # fatura.fat_divida += multa
-                # fatura.save()
-            return JsonResponse({'v':multa})
+                        if multa > 0:       
+                            
+                            RegistroMulta.objects.create(fatura=fatura, valor_multa=multa, data_aplicacao=hoje)
+                            # Atualiza a fatura com o valor da multa
+                            pag.pag_divida += multa
+                            pag.save()
+                        # return JsonResponse({'v':multa})
 
-    return HttpResponse("Multas aplicadas com sucesso.")
+        return HttpResponse("")

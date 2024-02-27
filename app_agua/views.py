@@ -170,7 +170,11 @@ def updateDef(request):
         iva = request.POST.get("iva")
         vencimento = request.POST.get("vencimentoday")
         multa = request.POST.get("multaforadoprazo")
-        multar = request.POST.get("multar") or "False"
+        multar = request.POST.get("multar")
+        if multar == 'on':
+            multar = "True"
+        else: 
+            multar = "False"
         consumomin = request.POST.get('consumomin')
 
         try:

@@ -144,10 +144,6 @@
                     success: function (response){
                         $('#reciboForm')[0].reset()
 
-                        // $('#multar').val(defArray.multar)
-                        // $('#valormulta').val(defArray.def_multaforadoprazo)
-                        // $('#vencimentoday').val(defArray.def_vencimentoday);
-
                         document.querySelector('#minRecibosDiv').innerHTML = ""
 
                         let pagData = response['data']
@@ -195,12 +191,12 @@
                                                 <label for="">V. Em Falta: <input type="text"  class="inputTipoLabel" value="${valoremfalta}" readonly/></label> <br/>
 
                                                 <label for="">V. Fat. Pagar: </label>
-                                                <input type="number" class="formTextMinInput" style="width:80px" name="valorapagar${pg}" /> 
+                                                <input type="number" class="formTextMinInput valorfatpagar" style="width:80px" name="valorapagar${pg}" /> 
                                                 <br />
                                                 <label for="">Divida: <input type="number" class="inputTipoLabel" value="${mindata['pag_divida']}" readonly /></label> <br/>
 
                                                 <label for="">V. Div. Pagar: </label> 
-                                                <input type="number" class="formTextMinInput" style="width:80px" name="dividaapagar${pg}" /> 
+                                                <input type="number" class="formTextMinInput dividapagar" style="width:80px" name="dividaapagar${pg}" /> 
                                                 <br/>
                                             </div>
                                         `)
@@ -220,33 +216,32 @@
 
             $('#reciboForm').submit(function(e){
                 e.preventDefault();
-                // let datapagamento = $('#datapagamento').val()
-                let datapagamento = '32'
-              
-                if(datapagamento == ""){
-                    alert('data de pagamento nao foi selecionada')
-                }else{
-                    $.ajax({
-                        type: 'POST',
-                        url: '{% url "pagarFatura"  %}',
-                        data: $(this).serialize(),
-                        dataType:"json",
-                        success: function (response){
-            
-                            if(response['data'] == '203'){
-                                valorAserPagoMaior()
-                            }else if(response['data'] == '200'){
-                                pagamentoFeitoComSucesso()
-                                $('#reciboForm')[0].reset()
-                                 document.querySelector('#minRecibosDiv').innerHTML = ""  
-                            }else{
-                                console.log(response['data'])
-                            } 
-                        }, error: function(response){
-                            console.log('Erro: ', response)
-                        }
-                    })
-                }    
+                for(const a of document.querySelectorAll('.dividapagar')){
+                    if(a.value == ''){
+                        a.value = 0
+                    }
+                }
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "pagarFatura"  %}',
+                    data: $(this).serialize(),
+                    dataType:"json",
+                    success: function (response){
+                        if(response['data'] == '203'){
+                            valorAserPagoMaior()
+                        }else if(response['data'] == '200'){
+                            pagamentoFeitoComSucesso()
+                            $('#reciboForm')[0].reset()
+                            document.querySelector('#minRecibosDiv').innerHTML = ""  
+                        }else{
+                            console.log(response['data'])
+                        } 
+                    }, error: function(response){
+                        console.log('Erro: ', response)
+                    }
+                })
+                   
             });
 
 
@@ -331,6 +326,8 @@
           <div class="navDiv">
               <button class="addButton" id="openModal" style="margin-right:10px" title="Pagar faturas"></button>
               <a href="{% url 'faturas' %}"><button class="btn"  style="margin-right:10px" title="Pagina de faturas">Faturas</button></a>
+              <a href="{% url 'multas' %}"><button class="btn"  style="margin-right:10px" title="Pagina de multas">Multas</button></a>
+
           </div>
 
         </div>
@@ -360,10 +357,6 @@
 
                         <input type="hidden" name="userid" id="userid" value="{{ user.id }}">
 
-                        <input type="text" name="multar" id="multar">
-                        <input type="text" name="valormulta" id="valormulta">
-                        <input type="text" name="vencimentoday" id="vencimentoday">
-
                         <input type="hidden" name="idgroupinput" id="idgroupinput">
 
                         <!-- fats a pagar -->
@@ -374,10 +367,10 @@
                             <input type="number" class="formTextInput" name="divida" id="divida" disabled />
                         </div>
 
-                        <div class="reciboInputModal">
+                        <!-- <div class="reciboInputModal">
                              <label>Data de pagamento</label>
                              <input type="date" class="formTextInput" name="datapagamento" id="datapagamento">
-                        </div>
+                        </div> -->
 
                       <div class="min-submit-buttons reciboInputModal" >
                           <button class="fecharButton" type="button" >Fechar</button>

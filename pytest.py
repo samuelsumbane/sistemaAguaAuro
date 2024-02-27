@@ -3,25 +3,29 @@ from datetime import datetime
 from datetime import datetime
 dataEHoraAtual = datetime.now()
 
+# import pdb
 
-mes = datetime.now().date()
-print(mes.day)
+# def exemplo():
+#     x = 10
+#     y = 5
+#     pdb.set_trace()
+#     resultado = x + y
+#     print(f"O resultado é {resultado}")
+
+# exemplo()
+
+# mes = datetime.now().date()
+# print(mes.day)
 
 # print(fat_vencimento)
 
-
-
-
-
-# letras = ('0', '1', '2', '3', '4', '5', '6', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',)
-
-# senha = ''
-# for a in range(5):
-#     senha += str(letras[randint(2, 8)])
-# print(senha)
+# s = 12
+# # f = float(12)
+# f = "{:.2f}".format(s)
+# # f2 = round(s, 2)
+# print(f)
 
 # dataEHoraAtual = datetime.now()
-
 
 # def retornarHora(value='HM'):
 #     if value == 'HM':

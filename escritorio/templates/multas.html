@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+    <script>
+        document.querySelector('.sidebar-btn-gerencia').classList.toggle('active-btn');
+
+         $(document).ready(function (){
+            $('#tabela').DataTable({
+                "ordering": false,
+                ajax: '{{ request.path }}?datatables=1',
+                serverSide: true,
+                columns: [
+                    { data: 'codigo_cliente', title: 'Código' },
+                    { data: 'nome_cliente', title: 'Nome' },
+                    { data: 'valor_multa', title: 'V. Multa' },
+                    { data: 'data_aplicacao', title: 'Data de aplicação' }
+                ],
+                "oLanguage": {
+                "sProcessing":   "Processando...",
+                "sLengthMenu":   "Mostrar _MENU_ registros",
+                "sZeroRecords":  "Não foram encontrados resultados",
+                "sInfo":         "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                "sInfoEmpty":    "Mostrando de 0 até 0 de 0 registros",
+                "sInfoFiltered": "",
+                "sInfoPostFix":  "",
+                "sSearch":       "Pesquisar:",
+                "sUrl":          "",
+                "oPaginate": {
+                    "sFirst":    "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext":     "Seguinte",
+                    "sLast":     "Último"
+                }
+              }
+            });
+        })
+    </script>
+
+
+
+<div class="fatura-page">
+
+    <div class='fatura-page-header'>
+        <div class="titleDiv"><h2>Multas aplicadas</h2></div>
+        <div class="navDiv">
+            <a href="{% url 'recibos' %}"><button class="btn"  style="margin-right:10px" title="Pagina de recibos">Recibos</button></a>
+            <a href="{% url 'faturas' %}"><button class="btn"  style="margin-right:10px" title="Pagina de faturas">Faturas</button></a>
+        </div>
+    </div>
+
+    <div class='fatura-page-body'>
+        <div class="fatura-page-body-table">
+            <table id="tabela" style="width:98%"></table>
+        </div>
+    </div>
+
+    <div class='fatura-page-footer'></div>
+</div>
+{% endblock %}

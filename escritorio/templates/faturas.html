@@ -195,7 +195,7 @@
                 $.ajax({
                     url: "{% url 'selecionarUmaFatura'  %}",
                     type: 'GET',
-                    data: {codigo: codigo, mes:mesPassado, ano:anoPassado},
+                    data: {codigo: codigo, mes:mesPassado, ano:anoPassado, idcliente:id_cliente},
                     dataType:"json",
                     success: function (response){
 
@@ -267,7 +267,6 @@
 
                             fatdata = response['fatdata'] 
                            
-
                             if (response['data'] == "200"){
                                 criadoComSucesso('Fatura', 'a')
                                 
@@ -302,6 +301,7 @@
           <div class="navDiv">
               <button class="addButton" id="openModal" style="margin-right:10px" title="Criar fatura"></button>
               <a href="{% url 'recibos' %}"><button class="btn"  style="margin-right:10px" title="Pagina de recibos">Recibos</button></a>
+              <a href="{% url 'multas' %}"><button class="btn"  style="margin-right:10px" title="Pagina de multas">Multas</button></a>
           </div>
 
         </div>

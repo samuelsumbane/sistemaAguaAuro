@@ -14,15 +14,17 @@
                 dataType:"json",
                 success: function (response){
 
-                   let defData = response['data'][0]
-                   $('#taxafixa').val(defData['def_taxafixa'])
-                   $('#multaforadoprazo').val(defData.def_multaforadoprazo)
-                   $('#metrocubico').val(defData.def_metrocubico)
-                   $('#iva').val(defData.def_iva)
-                   $('#vencimentoday').val(defData.def_vencimentoday)
-                   $('#consumomin').val(defData.def_consumomin)
+                  let defData = response['data'][0]
+                  $('#taxafixa').val(defData['def_taxafixa'])
+                  $('#multaforadoprazo').val(defData.def_multaforadoprazo)
+                  $('#metrocubico').val(defData.def_metrocubico)
+                  $('#iva').val(defData.def_iva)
+                  $('#vencimentoday').val(defData.def_vencimentoday)
+                  $('#consumomin').val(defData.def_consumomin)
 
-                   document.querySelector('#multar').checked = true
+                  if (defData.multar == true){
+                    let check = document.querySelector('.multarinput').checked = true
+                  }
 
                 }, error: function(response){
                     console.log('Erro: ', response)
@@ -140,7 +142,7 @@
                   <div class="defDivConf multar" >
                     <h3 class="defDivConf-title">Multar</h3>
                     <p class="defDivConf-title">Os clientes podem ser ou não ser multados ao esceder a data limite de pagamento de faturas.</p>
-                    <input type="checkbox" class='checkStyle' name="multar" id="multar" value="False"/>
+                    <input type="checkbox" class='checkStyle multarinput' name="multar" id="multar"/>
                   </div>
 
                   <div class="defDivConf multa" >
